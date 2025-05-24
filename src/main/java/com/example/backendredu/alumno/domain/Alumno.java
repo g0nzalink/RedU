@@ -1,5 +1,25 @@
 package com.example.backendredu.alumno.domain;
 
-public class Alumno {
-}
+import com.example.backendredu.usuario.domain.Carrera;
+import com.example.backendredu.usuario.domain.Usuario;
+import com.example.backendredu.usuario.domain.Rol;
+import jakarta.persistence.*;
+import lombok.Data;
 
+@Entity
+@Table(name = "alumnos")
+@Data
+public class Alumno extends Usuario {
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "career", nullable = false)
+    private Carrera career;
+
+    @Column(name = "faculty", nullable = false)
+    private String faculty;
+
+    @PrePersist
+    public void asignarRol() {
+        this.setUserType(Rol.ALUMNO);
+    }
+}
