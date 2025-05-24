@@ -5,9 +5,10 @@
 
 **Curso:** CS 2031 - Desarrollo Basado en Plataforma  
 **Integrantes del equipo:**  
-- Nombre Completo 1  
-- Nombre Completo 2  
-- Nombre Completo 3  
+- Gonzalo Andrés Valladolid Jiménez
+- Matías Sebastian Walde Verano
+- Nicolas Valentino Diaz Flores
+- Hector Emilio Huaman Puiquin 
 
 ---
 
@@ -49,12 +50,10 @@
 ## 📘 Introducción
 
 ### Contexto
-Describir brevemente el contexto en el que surge el proyecto.
+Este proyecto se desarrolla en el ámbito de la educación superior, respondiendo a necesidades en la comunicación y compromiso estudiantil. La industria educativa enfrenta desafíos en la retención de miembros en clubes universitarios y en la efectividad de los canales de difusión tradicionales, como correos electrónicos, que suelen ser ignorados. Además, existe una demanda no cubierta de colaboración interdisciplinaria, donde proyectos personales o grupales—como aquellos de estudiantes de administración que requieren apoyo de otras carreras—no logran alcanzar a su audiencia potencial. Al implementar soluciones innovadoras de comunicación, el proyecto no solo beneficia a los estudiantes y clubes, sino que también sienta las bases para un modelo escalable que podría aplicarse en otras instituciones, potenciando así la colaboración y la construcción de relaciones académicas y profesionales entre estudiantes y profesores.
 
-### Objetivos del Proyecto
-- Objetivo 1
-- Objetivo 2
-- Objetivo 3
+### Objetivo del Proyecto
+El objetivo principal de este proyecto a nivel provincial es mejorar la experiencia universitaria, enfocándonos especialmente en optimizar la comunicación de actividades, proyectos y oportunidades entre la universidad, los clubes estudiantiles y los alumnos. Actualmente, muchos estudiantes no reciben información oportuna sobre eventos o iniciativas, lo que lleva a la desintegración de clubes por falta de participación o al desconocimiento de proyectos relevantes. Para abordar este problema, nos centramos en objetivos específicos clave: mejorar la difusión de actividades tanto de clubes como de la universidad, fortalecer la comunicación institucional y promover la visibilidad de proyectos estudiantiles interdisciplinarios. De esta manera, buscamos crear un entorno más conectado y participativo, donde los estudiantes puedan aprovechar al máximo las oportunidades que ofrece la vida universitaria.
 
 ---
 
@@ -71,9 +70,19 @@ Explicar por qué es importante resolver este problema.
 ## 💡 Descripción de la Solución
 
 ### Funcionalidades Implementadas
-- Funcionalidad 1: Descripción...
-- Funcionalidad 2: Descripción...
-- Funcionalidad 3: Descripción...
+- Registro y autenticación:
+      - Verificación con correo institucional y código de alumno.
+- Publicaciones de clubes y universidad:
+      - Creación de publicaciones (solo por la directiva y la universidad).
+      - Fechas de cierre automático (evita información desactualizada).
+- Sistema de búsqueda:
+      - En publicaciones con tags categóricos (#servicio, #competitivo, #informativo, #recreativo).
+      - En proyectos con tags técnicos (#backend, #IA).
+      - En ambos añadir una búsqueda en base a nombres.
+- Sistema de "me gusta" y comentarios: ...
+- Perfiles de clubes: ...
+- Proyectos estudiantiles con aprobación manual:
+- Creación y eliminación de clubes: 
 
 ### Tecnologías Utilizadas
 - Lenguaje(s): ...
