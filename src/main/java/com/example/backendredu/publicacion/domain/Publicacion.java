@@ -30,4 +30,7 @@ public class Publicacion {
     @Enumerated(EnumType.STRING)
     @Column(name = "tag", nullable = false)
     private Tag tag;
+
+    @Column(name = "autor", nullable = false)
+    private String autor;
 }

@@ -25,5 +25,4 @@ public class Club {
 
     @OneToMany(mappedBy = "club")
     private List<Pertenece> memberships;
-
 }
