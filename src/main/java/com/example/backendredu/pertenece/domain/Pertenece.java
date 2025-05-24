@@ -30,7 +30,7 @@ public class Pertenece {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relacion", nullable = false)
-    private Relacion relaciion;
+    private Relacion relacion;
 
 }
 
