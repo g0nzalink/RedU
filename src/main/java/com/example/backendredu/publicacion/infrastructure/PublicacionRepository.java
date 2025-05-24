@@ -1,5 +1,8 @@
 package com.example.backendredu.publicacion.infrastructure;
 
-public interface PublicacionRepository {
+import com.example.backendredu.publicacion.domain.Publicacion;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PublicacionRepository extends JpaRepository<Long, Publicacion> {
 }
 

@@ -1,5 +1,7 @@
 package com.example.backendredu.usuario.infrastructure;
 
-public interface UsuarioRepository {
-}
+import com.example.backendredu.usuario.domain.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UsuarioRepository extends JpaRepository<String, Usuario> { }
 

@@ -1,5 +1,8 @@
 package com.example.backendredu.alumno.infrastructure;
 
-public interface AlumnoRepository {
+import com.example.backendredu.alumno.domain.Alumno;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AlumnoRepository extends JpaRepository<String, Alumno> {
 }
 
