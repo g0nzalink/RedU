@@ -29,7 +29,7 @@ public class Pertenece {
     private LocalDate joinDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "relaciion", nullable = false)
+    @Column(name = "relacion", nullable = false)
     private Relacion relaciion;
 
 }
