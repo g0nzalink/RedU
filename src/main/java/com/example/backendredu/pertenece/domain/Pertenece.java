@@ -2,6 +2,7 @@ package com.example.backendredu.pertenece.domain;
 
 
 import com.example.backendredu.club.domain.Club;
+import com.example.backendredu.proyecto.domain.Status;
 import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -26,5 +27,10 @@ public class Pertenece {
 
     @Column(name = "join_date", nullable = false)
     private LocalDate joinDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "relaciion", nullable = false)
+    private Relacion relaciion;
+
 }
 
