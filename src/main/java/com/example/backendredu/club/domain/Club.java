@@ -1,6 +1,5 @@
 package com.example.backendredu.club.domain;
 
-import com.example.backendredu.directiva.domain.Directiva;
 import com.example.backendredu.pertenece.domain.Pertenece;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -18,9 +17,6 @@ public class Club {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "last_names", nullable = false)
-    private String lastNames;
-
     @Column(name = "description")
     private String description;
 
@@ -30,6 +26,4 @@ public class Club {
     @OneToMany(mappedBy = "club")
     private List<Pertenece> memberships;
 
-    @OneToMany(mappedBy = "club")
-    private List<Directiva> directors;
 }
