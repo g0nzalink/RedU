@@ -17,9 +17,6 @@ public class Club {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "last_names", nullable = false)
-    private String lastNames;
-
     @Column(name = "description")
     private String description;
 
