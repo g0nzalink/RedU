@@ -1,7 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Jmnm3svF)
 
 
-# 🧠 Título del Proyecto
+# 🧠 RedU
 
 **Curso:** CS 2031 - Desarrollo Basado en Plataforma  
 **Integrantes del equipo:**  
@@ -79,15 +79,20 @@ Explicar por qué es importante resolver este problema.
       - En publicaciones con tags categóricos (#servicio, #competitivo, #informativo, #recreativo).
       - En proyectos con tags técnicos (#backend, #IA).
       - En ambos añadir una búsqueda en base a nombres.
-- Sistema de "me gusta" y comentarios: ...
-- Perfiles de clubes: ...
+- Sistema de "me gusta" y comentarios:
+      - Interacción básica para medir el compromiso.
+      - ¿Por qué? Fomenta la participación y retroalimentación.
+- Perfiles de clubes:
+      - Visualización de publicaciones y opción de seguirlos.
 - Proyectos estudiantiles con aprobación manual:
+      - Publicación tras revisión administrativa.
 - Creación y eliminación de clubes: 
+      - Únicamente posible de realizar por un usuario (universidad)
 
 ### Tecnologías Utilizadas
-- Lenguaje(s): ...
-- Frameworks: ...
-- Base de datos: ...
+- Lenguaje(s): Java 21
+- Frameworks: Spring Boot
+- Base de datos: JPA, Postgres
 - API externas: ...
 - Otras herramientas: ...
 
@@ -99,10 +104,18 @@ Explicar por qué es importante resolver este problema.
 ![Diagrama ER o de clases](ruta/al/diagrama.png)
 
 ### Descripción de Entidades
-| Entidad | Atributos principales | Relaciones |
-|--------|-----------------------|------------|
-| Usuario | id, nombre, correo | Tiene muchos pedidos |
-| Pedido | id, fecha, total | Pertenece a un usuario |
+
+| Entidad     | Atributos principales                                                                 | Relaciones                                                                                   |
+|-------------|----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Club        | email, nombre, descripcion, foto_perfil (opcional)                                     | Tiene muchos usuarios a través de la relación `Pertenece`                                    |
+| Usuario     | email, nombre, apellidos, descripcion, foto_perfil (opcional), tipo_usuario, clubes_que_pertenece | Es padre de las entidades Alumno, Profesor y Directiva<br>Puede pertenecer a muchos clubes  |
+| Alumno      | email, tipo_usuario = Estudiante, carrera, facultad                                    | Hereda de Usuario                                                                             |
+| Directiva   | email, tipo_usuario = Directiva, carrera, facultad, club_email                         | Hereda de Usuario<br>Asociado a un club que administra                                       |
+| Profesor    | email, tipo_usuario = Profesor, departamento                                           | Hereda de Usuario                                                                             |
+| Pertenece   | usuario_email, club_email, fecha_union                                                 | Relación entre Usuario y Club                                                                 |
+| Publicación | id, fecha_publicacion, ultima_modificacion, titulo, descripcion, tag                   | Puede estar asociada a un club o usuario (según cómo se modelen las publicaciones)           |
+
+
 
 ---
 
@@ -141,7 +154,7 @@ Explicar por qué es importante resolver este problema.
 
 ## 🔄 Eventos y Asincronía
 
-- Eventos implementados: `UserRegisteredEvent`, `CompanyCreatedEvent`, etc.
+- Eventos implementados: ...
 - Uso de listeners asincrónicos con `@Async`
 - Justificación de asincronía (mejorar rendimiento, desacoplar lógica)
 
