@@ -39,5 +39,6 @@ public class AlumnoController {
 		Alumno alumno = alumnoService.updateAlumnoDescription(correo, newDesc);
 		return ResponseEntity.ok(alumno);
 	}
+	
 }
 
