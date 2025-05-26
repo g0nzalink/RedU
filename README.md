@@ -60,10 +60,10 @@ El objetivo principal de este proyecto a nivel provincial es mejorar la experien
 ## 🧩 Identificación del Problema o Necesidad
 
 ### Descripción del Problema
-Explicar detalladamente el problema que se busca resolver.
+Los estudiantes universitarios no siempre son conscientes de las actividades que se realizan en su propia universidad. No son conscientes de la gran cantidad de organizaciones estudiantiles que hay en cada universidad y, por lo tanto, se pierden de grandes experiencias de potencial aprendizaje. A su vez, no todos en la universidad se encuentran comunicados y no se conocen todos entre si. Es por ello que, cuando alguien inicia un proyecto, no todas las personas que podrían estar interesadas en él saben de la existencia de dicho proyecto. En vistas generarles, el problema es la dificil difusión que hay para las oportunidades que existen en la universidad para crecer de manera académica o profesional, provocando que un estudiante nunca sepa de lo que se ha perdido.  
 
 ### Justificación
-Explicar por qué es importante resolver este problema.
+Las organizacicones estudiantiles como tal presentan proyectos o actividades las cuales son sumamente interesantes para el público universitario. Es por ello que estas organizaciones y sus actividades merecen una mayor difusión para llegar a un público de manera más fácil y rápida. De esta manera, los estudiantes podrán tener a su disposición una gran cantidad de eventos en los cuales podrán desarrollar nuevas habilidades o hasta poder hacer networking con personas que comparten sus intereses. Por otro lado, los estudiantes o hasta los profesores podrán ser capaces de difundir proyectos o anuncios buscando grupos de estudios para fortalecer sus habilidades académicas o explorar nuevos objetivos. Es necesario que las ideas o hasta necesidades de los alumnos tengan una difusiuón rápida y accesible para que puedan desarrollar sus habilidades académicas al máximo. 
 
 ---
 
@@ -105,17 +105,18 @@ Explicar por qué es importante resolver este problema.
 
 ### Descripción de Entidades
 
-| Entidad     | Atributos principales                                                                 | Relaciones                                                                                   |
-|-------------|----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
-| Club        | email, nombre, descripcion, foto_perfil (opcional)                                     | Tiene muchos usuarios a través de la relación `Pertenece`                                    |
-| Usuario     | email, nombre, apellidos, descripcion, foto_perfil (opcional), tipo_usuario, clubes_que_pertenece | Es padre de las entidades Alumno, Profesor y Directiva<br>Puede pertenecer a muchos clubes  |
-| Alumno      | email, tipo_usuario = Estudiante, carrera, facultad                                    | Hereda de Usuario                                                                             |
-| Directiva   | email, tipo_usuario = Directiva, carrera, facultad, club_email                         | Hereda de Usuario<br>Asociado a un club que administra                                       |
-| Profesor    | email, tipo_usuario = Profesor, departamento                                           | Hereda de Usuario                                                                             |
-| Pertenece   | usuario_email, club_email, fecha_union                                                 | Relación entre Usuario y Club                                                                 |
-| Publicación | id, fecha_publicacion, ultima_modificacion, titulo, descripcion, tag                   | Puede estar asociada a un club o usuario (según cómo se modelen las publicaciones)           |
+### Descripción de Entidades
 
-
+| Entidad      | Atributos Principales                                                                                       | Relaciones                                                                                                   |
+|--------------|-------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| **Club**       | email, nombre, descripcion, foto_perfil (opcional), num_follow                                                        | Tiene muchos `miembros` (entidad `Pertenece`) <br> Tiene muchos `seguidores` (`Usuario`)                    |
+| **Usuario**    | email, nombre, apellidos, descripcion, foto_perfil (opcional), tipo_usuario (Rol), publicaciones_likeadas           | Puede pertenecer a muchos clubes (`Pertenece`) <br> Puede seguir clubes <br> Puede apoyar publicaciones     |
+| **Alumno**     | Hereda de `Usuario`, tipo_usuario = Estudiante, carrera (Carrera), facultad (Facultad)                              | —                                                                                                            |
+| **Profesor**   | Hereda de `Usuario`, tipo_usuario = Profesor, departamento (Departamento)                                            | —                                                                                                            |
+| **Pertenece**  | usuario_email, club_email, fecha_union (nullable), relacion (Relación)                                               | Representa la relación entre un `Usuario` y un `Club`                                                        |
+| **Publicación**| id, fecha_publicacion, ultima_modificacion, titulo, descripcion, proyecto (bool), tag, num_apoyo, num_comentarios   | Tiene lista de apoyo (`Usuario`) <br> Tiene lista de comentarios <br> Puede estar asociada a un `Proyecto`  |
+| **Proyecto**   | id (hereda de Publicación), proyecto = true, status (Status), fecha_cierre, personas_buscadas                        | Es una `Publicación` con campo `proyecto = true`                                                             |
+| **Comentario** | id, publicacion_id, descripción, fecha_pub                                                                          | Pertenece a una `Publicación`                                                                                |
 
 ---
 
