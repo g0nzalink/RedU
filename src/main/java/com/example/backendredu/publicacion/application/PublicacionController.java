@@ -19,7 +19,7 @@ public class PublicacionController {
 
     @GetMapping("/{idPublicacion}")
     public ResponseEntity<Publicacion> getPublicacion(@PathVariable("idPublicacion") Long idPub){
-        return ResponseEntity.ok(publicacionService.getPublicacionById(idPub));
+            return ResponseEntity.ok(publicacionService.getPublicacionById(idPub));
     }
 
     @PostMapping("/publicacion")
