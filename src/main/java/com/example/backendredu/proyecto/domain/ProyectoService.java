@@ -49,8 +49,4 @@ public class ProyectoService {
 
         return proyectoRepository.save(proyecto);
     }
-
-
-
-
 }

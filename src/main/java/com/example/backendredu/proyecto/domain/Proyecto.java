@@ -21,5 +21,4 @@ public class Proyecto extends Publicacion {
         this.status=Status.ACTIVO;
         this.setEsProyecto(true);
     }
-
 }

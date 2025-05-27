@@ -1,9 +1,7 @@
 package com.example.backendredu.alumno.domain;
 
-import com.example.backendredu.alumno.exceptions.AlumnoNotFoundException;
 import com.example.backendredu.alumno.infrastructure.AlumnoRepository;
-import com.example.backendredu.club.domain.Club;
-import com.example.backendredu.publicacion.domain.Publicacion;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +10,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AlumnoService {
+
 	final private AlumnoRepository alumnoRepository;
 	
 	public Alumno getAlumnoById (String correo) {
-		return alumnoRepository.findById(correo).orElseThrow(() -> new AlumnoNotFoundException("No existe un alumno con el correo " + correo));
+		return alumnoRepository.findById(correo).orElseThrow(() -> new EntityNotFoundException("No existe un alumno con el correo " + correo));
 	}
-	
+
+	/*
 	public List<Publicacion> getAlumnoLikes (String correo) {
 		Alumno alumno = getAlumnoById(correo);
 		return alumno.getLikes();
@@ -33,5 +33,7 @@ public class AlumnoService {
 		alumno.setDescription(newDesc);
 		return alumno;
 	}
+
+	 */
 }
 

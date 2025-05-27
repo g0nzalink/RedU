@@ -19,7 +19,14 @@ public class ClubService {
     
     private final PertenenciaRepository perteneceRepository;
     private final UsuarioRepository usuarioRepository;
-    
+
+    public Club getClub(String email){
+        return clubRepository.findById(email).orElseThrow(() -> new EntityNotFoundException("No existe un club con el correo " + email));
+    }
+
+
+
+    /*
     public Club createClub(Club club) {
         if (clubRepository.existsById(club.getEmail())) {
             throw new IllegalArgumentException("Club ya existe con correo" + club.getEmail());
@@ -51,5 +58,6 @@ public class ClubService {
         pertenece.setRelacion(relacion);
         perteneceRepository.save(pertenece);
     }
+     */
 }
 

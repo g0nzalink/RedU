@@ -34,14 +34,8 @@ public class Publicacion {
     
     @Column(name = "descripcion")
     private String descripcion;
-/*
-    @OneToMany
-    @JoinColumn(name = "listApoyo")
-    private List<Usuario> listApoyo;
-*/
 
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "listComentario")
     private List<Comentario> listComentario = new ArrayList<>();
     
     @Convert(converter = TagListConverter.class)

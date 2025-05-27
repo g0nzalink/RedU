@@ -14,14 +14,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/alumno")
 public class AlumnoController {
+
 	private final AlumnoService alumnoService;
 	
 	@GetMapping("/{correo}")
-	ResponseEntity<Alumno> getAlumnoById(@PathVariable String correo) {
+	public ResponseEntity<Alumno> getAlumnoById(@PathVariable String correo) {
 		Alumno alumno = alumnoService.getAlumnoById(correo);
 		return ResponseEntity.ok(alumno);
 	}
-	
+	/*
 	@GetMapping("/{correo}/likes")
 	ResponseEntity<List<Publicacion>> getAlumnoLikes(@PathVariable String correo) {
 		List<Publicacion> likes = alumnoService.getAlumnoLikes(correo);
@@ -39,6 +40,6 @@ public class AlumnoController {
 		Alumno alumno = alumnoService.updateAlumnoDescription(correo, newDesc);
 		return ResponseEntity.ok(alumno);
 	}
-	
+*/
 }
 

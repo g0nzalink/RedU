@@ -15,6 +15,13 @@ import java.util.List;
 public class ClubController {
     private final ClubService clubService;
 
+    @GetMapping("/{email}")
+    public ResponseEntity<Club> getClub(@PathVariable String email) {
+        return ResponseEntity.ok(clubService.getClub(email));
+    }
+
+
+/*
     // ---- Controladores para utec admin -------
     // Controller para superadmin
     @PostMapping("")
@@ -30,14 +37,6 @@ public class ClubController {
         return ResponseEntity.ok().build();
     }
 
-    // ------- Controladores para la directiva -------
-    /*
-    // Controller para directiva
-    @PostMapping("/{email}/posts")
-    public ResponseEntity<?> createPost(@PathVariable String email) {
-        return null;
-    }
-    */
     @GetMapping("/{email}/directive")
     public ResponseEntity<?> getDirective(@PathVariable String email) {
         return null;
@@ -57,10 +56,7 @@ public class ClubController {
 
     // ------- Controladores para todos -------
     // Controller para todos
-    @GetMapping("/{email}")
-    public ResponseEntity<Club> getClub(@PathVariable String email) {
-        return ResponseEntity.ok(clubService.getClub(email));
-    }
+
 
     // Controller para todos
     @GetMapping("")
@@ -87,5 +83,7 @@ public class ClubController {
     }
     // ¿Seguir y dejar de seguir debería también ser endpoints?
     // ¿Debería estar el endpoint para publicar un post aquí o en publicaciones?
+
+ */
 }
 

@@ -39,15 +39,6 @@ public class ProyectoController {
         return ResponseEntity.ok(proyectoService.obtenerProyecto(proyectoId));
     }
 
-    /*
-    La implementacion de que alguien pueda comentar se hace en publicacion, ya que tanto publicacion como proyecto
-    puede tener comentarios.
-    @PatchMapping
-    public ResponseEntity<Proyecto> comentarProyecto(@RequestBody Comentario comentario){
-
-    }
-*/
-
     //Implementar que el usuario creador pueda modificar el proyecto, incluye el modificar el status
     //Falta implementar una mejor logica con dtos
     @PatchMapping("/actualizar/{proyectoId}")
@@ -55,5 +46,4 @@ public class ProyectoController {
         Proyecto actualizado = proyectoService.actualizarProyecto(proyecto, proyectoId);
         return ResponseEntity.ok(actualizado);
     }
-
 }
