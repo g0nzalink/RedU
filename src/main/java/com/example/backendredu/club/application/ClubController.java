@@ -7,8 +7,11 @@ import com.example.backendredu.pertenencia.domain.Pertenencia;
 import com.example.backendredu.pertenencia.domain.PertenenciaService;
 import com.example.backendredu.pertenencia.dto.PertenenciaRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
+import com.example.backendredu.usuario.domain.Usuario;
+import com.example.backendredu.usuario.dto.UsuarioResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,13 +29,15 @@ public class ClubController {
 
     private final PertenenciaService pertenenciaService;
 
+    private final ModelMapper modelMapper;
+
     @GetMapping("/{email}")
     public ResponseEntity<ClubResponseDto> getClub(@PathVariable String email) {
         return ResponseEntity.ok(clubService.getClub(email));
     }
 
     @GetMapping
-    public ResponseEntity<List<Club>> listarPublicaciones() {
+    public ResponseEntity<List<Club>> listarClubs() {
         return ResponseEntity.ok(clubService.allClubs());
     }
 
@@ -58,6 +63,16 @@ public class ClubController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{email}/seguidores")
+    public ResponseEntity<List<UsuarioResponseDto>> getSeguidores(
+            @PathVariable("email") String clubEmail
+    ) {
+        List<Usuario> usuarios = pertenenciaService.obtenerSeguidores(clubEmail);
+        List<UsuarioResponseDto> dtos = usuarios.stream()
+                .map(u -> modelMapper.map(u, UsuarioResponseDto.class))
+                .toList();
+        return ResponseEntity.ok(dtos);
+    }
 /*
 
     // ---- Controladores para utec admin -------

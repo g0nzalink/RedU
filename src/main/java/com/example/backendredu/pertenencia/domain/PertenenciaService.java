@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -53,6 +54,18 @@ public class PertenenciaService {
                 .orElseThrow(() -> new EntityNotFoundException("Pertenencia no encontrado"));
 
         pertenenciaRepository.delete(pertenencia);
+    }
+
+    public List<Usuario> obtenerSeguidores(String clubEmail) {
+        Club club = clubRepository.findById(clubEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Club no encontrado"));
+
+        List<Pertenencia> pertenencias = pertenenciaRepository
+                .findByClubIdAndRelacion(club, Relacion.SEGUIDOR);
+
+        return pertenencias.stream()
+                .map(Pertenencia::getUsuarioId)
+                .toList();
     }
 
 }
