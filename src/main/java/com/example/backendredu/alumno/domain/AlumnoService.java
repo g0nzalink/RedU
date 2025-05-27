@@ -1,8 +1,11 @@
 package com.example.backendredu.alumno.domain;
 
+import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.alumno.infrastructure.AlumnoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +15,15 @@ import java.util.List;
 public class AlumnoService {
 
 	final private AlumnoRepository alumnoRepository;
-	
-	public Alumno getAlumnoById (String correo) {
-		return alumnoRepository.findById(correo).orElseThrow(() -> new EntityNotFoundException("No existe un alumno con el correo " + correo));
+
+	final private ModelMapper modelMapper;
+
+	@Transactional
+	public AlumnoResponseDto getAlumnoById(String email) {
+		Alumno alumno = alumnoRepository.findById(email)
+				.orElseThrow(() -> new EntityNotFoundException(
+						"No existe un alumno con el correo " + email));
+		return modelMapper.map(alumno, AlumnoResponseDto.class);
 	}
 
 	/*

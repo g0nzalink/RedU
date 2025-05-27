@@ -2,6 +2,7 @@ package com.example.backendredu.club.application;
 
 import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.club.domain.ClubService;
+import com.example.backendredu.club.dto.ClubResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class ClubController {
     private final ClubService clubService;
 
     @GetMapping("/{email}")
-    public ResponseEntity<Club> getClub(@PathVariable String email) {
+    public ResponseEntity<ClubResponseDto> getClub(@PathVariable String email) {
         return ResponseEntity.ok(clubService.getClub(email));
     }
 

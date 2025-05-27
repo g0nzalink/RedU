@@ -1,5 +1,6 @@
 package com.example.backendredu.club.domain;
 
+import com.example.backendredu.club.dto.ClubResponseDto;
 import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.pertenencia.domain.Pertenencia;
@@ -8,6 +9,7 @@ import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,15 +18,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ClubService {
     private final ClubRepository clubRepository;
-    
+
+    private final ModelMapper modelMapper;
+
     private final PertenenciaRepository perteneceRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public Club getClub(String email){
-        return clubRepository.findById(email).orElseThrow(() -> new EntityNotFoundException("No existe un club con el correo " + email));
+    public ClubResponseDto getClub(String email){
+        Club club = clubRepository.findById(email).orElseThrow(() -> new EntityNotFoundException("No existe un club con el correo " + email));
+        return modelMapper.map(club, ClubResponseDto.class);
     }
-
-
 
     /*
     public Club createClub(Club club) {

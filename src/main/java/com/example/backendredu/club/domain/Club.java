@@ -16,9 +16,4 @@ public class Club {
 
     @Column(name = "descripcion")
     private String descripcion;
-/*
-    Por ahora no implementaremos foto
-    @Column(name = "foto_perfil")
-    private String fotoPerfil;
-*/
 }

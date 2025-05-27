@@ -22,11 +22,7 @@ public class Usuario {
 
     @Column(name = "description")
     private String description;
-/*
-    Por el MVP ahora no nos enfocamos en las fotos de perfil
-    @Column(name = "profile_picture")
-    private String profilePicture;
-*/
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
     private Rol userType;

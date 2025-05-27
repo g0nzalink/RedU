@@ -2,8 +2,8 @@ package com.example.backendredu.alumno.application;
 
 import com.example.backendredu.alumno.domain.Alumno;
 import com.example.backendredu.alumno.domain.AlumnoService;
-import com.example.backendredu.club.domain.Club;
-import com.example.backendredu.publicacion.domain.Publicacion;
+
+import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,12 @@ import java.util.List;
 public class AlumnoController {
 
 	private final AlumnoService alumnoService;
-	
-	@GetMapping("/{correo}")
-	public ResponseEntity<Alumno> getAlumnoById(@PathVariable String correo) {
-		Alumno alumno = alumnoService.getAlumnoById(correo);
-		return ResponseEntity.ok(alumno);
+
+	@GetMapping("/{email}")
+	public ResponseEntity<AlumnoResponseDto> getAlumno(
+			@PathVariable String email) {
+
+		return ResponseEntity.ok(alumnoService.getAlumnoById(email));
 	}
 	/*
 	@GetMapping("/{correo}/likes")
