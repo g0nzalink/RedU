@@ -8,6 +8,7 @@ import lombok.Data;
 @Entity
 @Table(name = "alumnos")
 @Data
+@PrimaryKeyJoinColumn(name = "email")
 public class Alumno extends Usuario {
 
     @Enumerated(EnumType.STRING)

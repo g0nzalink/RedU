@@ -4,6 +4,7 @@ import com.example.backendredu.alumno.domain.Alumno;
 import com.example.backendredu.alumno.domain.AlumnoService;
 
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
+import com.example.backendredu.auth.AuthRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,13 @@ public class AlumnoController {
 
 		return ResponseEntity.ok(alumnoService.getAlumnoById(email));
 	}
+
+	@PostMapping("/register")
+	public ResponseEntity<?> register(@RequestBody AuthRequest request) {
+		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword());
+		return ResponseEntity.ok("Usuario registrado");
+	}
+
 	/*
 	@GetMapping("/{correo}/likes")
 	ResponseEntity<List<Publicacion>> getAlumnoLikes(@PathVariable String correo) {

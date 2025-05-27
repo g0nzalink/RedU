@@ -2,10 +2,14 @@ package com.example.backendredu.alumno.domain;
 
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.alumno.infrastructure.AlumnoRepository;
+import com.example.backendredu.usuario.domain.Role;
+import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +22,9 @@ public class AlumnoService {
 
 	final private ModelMapper modelMapper;
 
+	@Autowired
+	private PasswordEncoder encoder;
+
 	@Transactional
 	public AlumnoResponseDto getAlumnoById(String email) {
 		Alumno alumno = alumnoRepository.findById(email)
@@ -25,6 +32,16 @@ public class AlumnoService {
 						"No existe un alumno con el correo " + email));
 		return modelMapper.map(alumno, AlumnoResponseDto.class);
 	}
+
+	public void register(String email, String username, String password) {
+		Alumno alumno = new Alumno();
+		alumno.setEmail(email);
+		alumno.setUsername(username);
+		alumno.setPassword(encoder.encode(password));
+		alumno.setUserType(Role.ALUMNO);
+		alumnoRepository.save(alumno);
+	}
+
 
 	/*
 	public List<Publicacion> getAlumnoLikes (String correo) {
