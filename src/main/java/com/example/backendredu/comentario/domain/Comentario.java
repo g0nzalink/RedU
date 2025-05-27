@@ -22,11 +22,11 @@ public class Comentario{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "publicacion_id", nullable = false)
 	private Publicacion publicacion;
-
+/*
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "usuario_id", nullable = false)
 	private Usuario autor;
-
+*/
 	@Column(name = "contenido", nullable = false)
 	private String contenido;
 

@@ -2,6 +2,7 @@ package com.example.backendredu.publicacion.domain;
 
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
+import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
 import com.example.backendredu.publicacion.exception.PublicacionNotFoundException;
 import com.example.backendredu.publicacion.infrastructure.PublicacionRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,23 +44,19 @@ public class PublicacionService {
     }
 
     @Transactional
-    public PublicacionResponseDto actualizarPublicacion(PublicacionRequestDto newpublicacion, Long id) {
-        Publicacion publicacion = publicacionRepository.findById(id)
+    public PublicacionResponseDto actualizarPublicacion(PublicacionUpdateDto dto, Long id) {
+        Publicacion entidad = publicacionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada con id: " + id));
 
-        if (newpublicacion.getTitulo() != null) {
-            publicacion.setTitulo(newpublicacion.getTitulo());
-        }
-        if (newpublicacion.getDescripcion() != null) {
-            publicacion.setDescripcion(newpublicacion.getDescripcion());
-        }
-        if (newpublicacion.getFechaModificacion() != null) {
-            publicacion.setFechaModificacion(newpublicacion.getFechaModificacion());
+        // Solo actualizamos lo que venga en el DTO
+        if (dto.getTitulo() != null)             entidad.setTitulo(dto.getTitulo());
+        if (dto.getDescripcion() != null)        entidad.setDescripcion(dto.getDescripcion());
+        if (dto.getFechaModificacion() != null)  entidad.setFechaModificacion(dto.getFechaModificacion());
+        if (dto.getListTag() != null) {
+            entidad.setListTag(dto.getListTag());
         }
 
-        modelMapper.map(newpublicacion, publicacion);
-        publicacion.setFechaModificacion(newpublicacion.getFechaModificacion());
-        Publicacion updated = publicacionRepository.save(publicacion);
+        Publicacion updated = publicacionRepository.save(entidad);
         return modelMapper.map(updated, PublicacionResponseDto.class);
     }
 }

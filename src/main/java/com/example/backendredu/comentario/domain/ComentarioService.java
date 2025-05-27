@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,18 +28,22 @@ public class ComentarioService {
 
     private final ModelMapper modelMapper;
 
-    public ComentarioResponseDto crearComentario(ComentarioRequestDto newcomentario, Long publicacionId){
+    public ComentarioResponseDto crearComentario(ComentarioRequestDto newcomentario, Long publicacionId) {
         Publicacion pub = publicacionRepository.findById(publicacionId)
                 .orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada"));
 
+        // 1. Mapea y ajusta la publicación y la fecha
         Comentario comentario = modelMapper.map(newcomentario, Comentario.class);
         comentario.setPublicacion(pub);
+        comentario.setFechaPublicacion(LocalDateTime.now());
+        //falta implementar el guardar el autor
 
-        pub.getListComentario().add(comentario);
-        publicacionRepository.save(pub);
-        //c.setAutor(autor); falta implementar el como se obtiene el autor
+        // 2. Guarda SOLO el comentario
+        Comentario saved = comentarioRepository.save(comentario);
 
-        return modelMapper.map(comentario, ComentarioResponseDto.class);
+        pub.getListComentario().add(saved);
+        // 3. Devuelve el DTO mapeado del comentario guardado (con ID)
+        return modelMapper.map(saved, ComentarioResponseDto.class);
     }
 
     @Transactional
@@ -49,6 +54,5 @@ public class ComentarioService {
                 .map(c -> modelMapper.map(c, ComentarioResponseDto.class))
                 .collect(Collectors.toList());
     }
-
 
 }

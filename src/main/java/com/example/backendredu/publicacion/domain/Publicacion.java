@@ -14,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "publicaciones")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 public class Publicacion {
     @Id
@@ -38,7 +39,7 @@ public class Publicacion {
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comentario> listComentario = new ArrayList<>();
     
-    @Convert(converter = TagListConverter.class)
+        @Convert(converter = TagListConverter.class)
     @Column(name = "listTag", nullable = false)
     private List<Tag> listTag;
 

@@ -14,7 +14,7 @@ public class TagListConverter implements AttributeConverter<List<Tag>, String> {
 	
 	@Override
 	public String convertToDatabaseColumn(List<Tag> tag_list) {
-		if (tag_list.isEmpty()) { return ""; }
+		if (tag_list == null || tag_list.isEmpty()) { return ""; }
 		return tag_list.stream().map(Enum::name).collect(Collectors.joining(","));
 	}
 	

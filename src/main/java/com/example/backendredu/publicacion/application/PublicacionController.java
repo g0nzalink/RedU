@@ -8,6 +8,7 @@ import com.example.backendredu.publicacion.domain.Publicacion;
 import com.example.backendredu.publicacion.domain.PublicacionService;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
+import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class PublicacionController {
 
     private final ComentarioService comentarioService;
 
-    @PostMapping("/publicacion")
+    @PostMapping
     public ResponseEntity<PublicacionResponseDto> crearPublicacion(@RequestBody PublicacionRequestDto publicacion){
         PublicacionResponseDto createdPublicacion = publicacionService.createPublicacion(publicacion);
         return ResponseEntity.created(URI.create("http://localhost/publicacion/" + createdPublicacion.getId())).body(createdPublicacion);
@@ -41,8 +42,8 @@ public class PublicacionController {
             return ResponseEntity.ok(publicacionService.getPublicacionById(idPublicacion));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<PublicacionResponseDto> actualizarPublicacion(@PathVariable Long id, @Valid @RequestBody PublicacionRequestDto publicacion) {
+    @PatchMapping("/actualizar/{id}")
+    public ResponseEntity<PublicacionResponseDto> actualizarPublicacion(@PathVariable Long id, @Valid @RequestBody PublicacionUpdateDto publicacion) {
         return ResponseEntity.ok(publicacionService.actualizarPublicacion(publicacion, id));
     }
 

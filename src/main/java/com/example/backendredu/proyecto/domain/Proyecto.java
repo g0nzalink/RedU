@@ -7,6 +7,8 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "proyecto")
+@PrimaryKeyJoinColumn(name = "id")
 public class Proyecto extends Publicacion {
 
     @Enumerated(EnumType.STRING)
