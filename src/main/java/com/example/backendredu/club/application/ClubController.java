@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/clubs")
+@RequestMapping("/club")
 @RequiredArgsConstructor
 public class ClubController {
     private final ClubService clubService;

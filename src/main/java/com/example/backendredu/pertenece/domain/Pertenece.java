@@ -19,14 +19,14 @@ public class Pertenece {
 
     @ManyToOne
     @JoinColumn(name = "user_email", referencedColumnName = "email")
-    private Usuario user;
+    private Usuario usuarioId;
 
     @ManyToOne
     @JoinColumn(name = "club_email", referencedColumnName = "email")
-    private Club club;
+    private Club clubId;
 
     @Column(name = "join_date", nullable = false)
-    private LocalDate joinDate;
+    private LocalDate fechaUnion;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relacion", nullable = false)

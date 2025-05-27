@@ -15,8 +15,6 @@ public class PublicacionController {
 
     private final PublicacionService publicacionService;
 
-    //private final ModelMapper modelMapper;
-
     @GetMapping("/{idPublicacion}")
     public ResponseEntity<Publicacion> getPublicacion(@PathVariable("idPublicacion") Long idPub){
             return ResponseEntity.ok(publicacionService.getPublicacionById(idPub));
@@ -27,7 +25,5 @@ public class PublicacionController {
         Publicacion createdPublicacion = publicacionService.createPublicacion(publicacion);
         return ResponseEntity.created(URI.create("http://localhost/publicacion/" + createdPublicacion.getId())).body(createdPublicacion);
     }
-
-
 }
 

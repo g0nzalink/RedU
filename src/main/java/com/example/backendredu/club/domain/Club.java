@@ -14,15 +14,13 @@ public class Club {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "nombre", nullable = false)
+    private String nombre;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "descripcion")
+    private String descripcion;
 
-    @Column(name = "profile_picture")
-    private String profilePicture;
-
-    @OneToMany(mappedBy = "club")
-    private List<Pertenece> memberships;
+    @Column(name = "foto_perfil")
+    private String fotoPerfil;
+    
 }

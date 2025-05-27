@@ -17,22 +17,11 @@ import java.util.List;
 public class Alumno extends Usuario {
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "career", nullable = false)
-    private Carrera career;
+    @Column(name = "carrera", nullable = false)
+    private Carrera carrera;
 
-    @Column(name = "faculty", nullable = false)
-    private String faculty;
-    
-    @OneToMany(mappedBy = "follows")
-    private List<Club> follows;
-
-    @ManyToMany
-    @JoinTable(
-            name = "AlumnoLikesPublicacion",
-            joinColumns = @JoinColumn(name = "alumnoCorreo"),
-            inverseJoinColumns = @JoinColumn(name = "publicacionId")
-    )
-    private List<Publicacion> likes;
+    @Column(name = "facultad", nullable = false)
+    private String facultad;
     
     @PrePersist
     public void asignarRol() {

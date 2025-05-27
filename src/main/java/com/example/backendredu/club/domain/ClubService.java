@@ -1,95 +1,61 @@
 package com.example.backendredu.club.domain;
 
+import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
+import com.example.backendredu.pertenece.domain.Pertenece;
+import com.example.backendredu.pertenece.domain.Relacion;
+import com.example.backendredu.pertenece.infrastructure.PerteneceRepository;
+import com.example.backendredu.usuario.domain.Rol;
 import com.example.backendredu.usuario.domain.Usuario;
+import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ClubService {
     private final ClubRepository clubRepository;
-
-    // Métodos para superadmin
-    @PostMapping("")
+    
+    private final PerteneceRepository perteneceRepository;
+    private final UsuarioRepository usuarioRepository;
+    
     public Club createClub(Club club) {
-        if(clubRepository.existsById(club.getEmail())) {
-            throw new IllegalArgumentException("Ya existe un club con ese email: " + club.getEmail());
+        if (clubRepository.existsById(club.getEmail())) {
+            throw new IllegalArgumentException("Club ya existe con correo" + club.getEmail());
         }
-        return clubRepository.save(club);
+        clubRepository.save(club);
+        return club;
     }
-
-    // Métodos para superadmin
-    public void deleteClub(@PathVariable String email) {
-        if(!clubRepository.existsById(email)) {
-            throw new IllegalArgumentException("No existe un club con ese email: " + email);
+    
+    public void deleteClub(String email) {
+        if (clubRepository.existsById(email)) {
+            throw new EntityNotFoundException("Club no existe con correo" + email);
         }
         clubRepository.deleteById(email);
     }
-
-    // Métodos para superadmin
-    public void updateClub(@PathVariable String email) {
-
+    
+    public void clubChangeRole(String userEmail, String clubEmail, Relacion relacion) {
+        if (clubRepository.existsById(clubEmail)) {
+            throw new ClubNotFoundException("Club no existe con correo" + clubEmail);
+        }
+        if (usuarioRepository.existsById(userEmail)) {
+            throw new EntityNotFoundException("Usuario no existe con correo" + userEmail);
+        }
+        Optional<Pertenece> members = perteneceRepository.findByUsuarioIdEmailAndClubIdEmail(userEmail, clubEmail);
+        if (members.isEmpty()) {
+            throw new EntityNotFoundException("No existe usuario de correo" + userEmail + "en el club de correo" + clubEmail);
+        }
+        
+        Pertenece pertenece = members.get();
+        pertenece.setRelacion(relacion);
+        perteneceRepository.save(pertenece);
     }
-
-    // ------- Métodos para la directiva -------
-    /*
-    // Métodos para directiva
-    @PostMapping("/{email}/posts")
-    public ResponseEntity<?> createPost(@PathVariable String email) {
-        return null;
-    }
-
-    public ResponseEntity<?> getDirective(@PathVariable String email) {
-        return null;
-    }
-
-    public ResponseEntity<?> addMember(@PathVariable String email) {
-    }
-
-
-    public ResponseEntity<?> removeMember(@PathVariable String email) {
-        return null;
-    }
-     */
-
-    // ------- Métodos para todos -------
-    // Métodos para todos
-    public Club getClub(@PathVariable String email) {
-        return clubRepository.findById(email)
-                .orElseThrow(() -> new IllegalArgumentException("Club no encontrado: " + email));
-    }
-
-    // Métodos para todos
-    public List<Club> getClubs() {
-        return clubRepository.findAll();
-    }
-
-    /*
-    // Métodos para todos
-    public List<Usuario> getFollowers(@PathVariable String email) {
-    }
-
-    */
-
-    // Métodos para todos
-    /*
-    public List<publicacion> getPosts(@PathVariable String email) {
-        Club club = getClub(email);
-
-    }
-    */
-
-    // Endpoint para ver publicaciones por nombre y tag.
-    /*
-    public List<publicacion> getFilteredPosts(@PathVariable String email, @RequestParam String tag, @RequestParam String nombre) {
-        return null;
-    }
-    */
-
 }
 

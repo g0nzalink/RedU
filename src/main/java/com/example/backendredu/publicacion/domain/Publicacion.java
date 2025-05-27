@@ -1,11 +1,15 @@
 package com.example.backendredu.publicacion.domain;
 
 
+import com.example.backendredu.comentario.domain.Comentario;
+import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "publicaciones")
@@ -14,23 +18,31 @@ public class Publicacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "publication_date", nullable = false)
-    private ZonedDateTime publicationDate;
-
-    @Column(name = "last_modification", nullable = false)
-    private ZonedDateTime lastModification;
-
-    @Column(name = "title", nullable = false)
-    private String title;
-
-    @Column(name = "description")
-    private String description;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tag", nullable = false)
-    private Tag tag;
-
+    
     @Column(name = "autor", nullable = false)
     private String autor;
+    
+    @Column(name = "fechaPublicacion", nullable = false)
+    private LocalDateTime fechaPublicacion;
+    
+    @Column(name = "fechaModificacion", nullable = false)
+    private LocalDateTime fechaModificacion;
+    
+    @Column(name = "titulo", nullable = false)
+    private String titulo;
+    
+    @Column(name = "descripcion")
+    private String descripcion;
+    
+    @OneToMany
+    @JoinColumn(name = "listApoyo")
+    private List<Usuario> listApoyo;
+    
+    @OneToMany
+    @JoinColumn(name = "listComentario")
+    private List<Comentario> listComentario;
+    
+    @Convert(converter = TagListConverter.class)
+    @Column(name = "listTag", nullable = false)
+    private List<Tag> listTag;
 }

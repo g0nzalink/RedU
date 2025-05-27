@@ -32,9 +32,7 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
     private Rol userType;
-
-    @OneToMany(mappedBy = "user")
-    private List<Pertenece> clubsMemberships;
+    
 }
 
 
