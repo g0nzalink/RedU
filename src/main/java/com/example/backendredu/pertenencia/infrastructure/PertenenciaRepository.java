@@ -12,7 +12,7 @@ public interface PertenenciaRepository extends JpaRepository<Pertenencia, Long> 
 
 	boolean existsByUsuarioIdAndClubId(Usuario usuario, Club club);
 
-	List<Pertenencia> findByClubIdEmail(String email);
+	//List<Pertenencia> findByClubIdEmail(String email);
 	
 	Optional<Pertenencia> findByUsuarioIdEmailAndClubIdEmail(String userEmail, String clubEmail);
 }

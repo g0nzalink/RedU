@@ -1,7 +1,10 @@
 package com.example.backendredu.club.domain;
 
+import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Table(name = "clubs")

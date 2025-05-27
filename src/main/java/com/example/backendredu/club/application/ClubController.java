@@ -10,6 +10,9 @@ import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -33,19 +36,29 @@ public class ClubController {
         return ResponseEntity.ok(clubService.allClubs());
     }
 
-    //TODO
-/*
-    @PostMapping("/seguir")
+    @PreAuthorize("hasAnyRole('ALUMNO', 'PROFESOR')")
+    @PostMapping("/{clubId}/seguir")
     public ResponseEntity<Pertenencia> seguirClub(
-            @RequestBody PertenenciaRequestDto dto,
-            //@AuthenticationPrincipal UserDetails userDetails // si usas Spring Security
+            @PathVariable String clubId,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        //String usuarioEmail = userDetails.getUsername();
-        Pertenencia pertenencia = pertenenciaService.crearPertenencia(usuarioEmail, dto);
-        return ResponseEntity.created(URI.create("http://localhost/proyecto/" + creado.getId())).body(creado);
+        String usuarioEmail = userDetails.getUsername();
+        Pertenencia pertenencia = pertenenciaService.crearPertenencia(usuarioEmail, clubId);
+        return ResponseEntity.created(URI.create("http://localhost/club/" + pertenencia.getId())).body(pertenencia);
     }
 
+    @PreAuthorize("hasAnyRole('ALUMNO', 'PROFESOR')")
+    @DeleteMapping("/{clubId}/dejarSeguir")
+    public ResponseEntity<Pertenencia> dejarDeSeguirClub(
+            @PathVariable String clubId,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String usuarioEmail = userDetails.getUsername();
+        pertenenciaService.borrarPertenencia(usuarioEmail, clubId);
+        return ResponseEntity.noContent().build();
+    }
 
+/*
 
     // ---- Controladores para utec admin -------
     // Controller para superadmin
