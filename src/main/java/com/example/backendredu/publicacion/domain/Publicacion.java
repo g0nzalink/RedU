@@ -33,11 +33,11 @@ public class Publicacion {
     
     @Column(name = "descripcion")
     private String descripcion;
-    
+/*
     @OneToMany
     @JoinColumn(name = "listApoyo")
     private List<Usuario> listApoyo;
-    
+*/
     @OneToMany
     @JoinColumn(name = "listComentario")
     private List<Comentario> listComentario;
@@ -45,4 +45,7 @@ public class Publicacion {
     @Convert(converter = TagListConverter.class)
     @Column(name = "listTag", nullable = false)
     private List<Tag> listTag;
+
+    @Column
+    private Boolean esProyecto;
 }

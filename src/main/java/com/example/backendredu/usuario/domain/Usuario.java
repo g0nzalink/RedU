@@ -1,12 +1,9 @@
 package com.example.backendredu.usuario.domain;
 
-import com.example.backendredu.pertenece.domain.Pertenece;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
@@ -25,10 +22,11 @@ public class Usuario {
 
     @Column(name = "description")
     private String description;
-
+/*
+    Por el MVP ahora no nos enfocamos en las fotos de perfil
     @Column(name = "profile_picture")
     private String profilePicture;
-
+*/
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
     private Rol userType;

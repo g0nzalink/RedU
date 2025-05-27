@@ -1,9 +1,6 @@
 package com.example.backendredu.comentario.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,14 +12,17 @@ import java.time.ZonedDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comentario 	{
+public class Comentario{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
+	@Column(name = "publicacion_de_origen", nullable = false)
 	private Long publicacionId;
-	
-	private String descripcion;
-	
+
+	@Column(name = "contenido", nullable = false)
+	private String contenido;
+
+	@Column(name = "fecha_de_publicacion", nullable = false)
 	private LocalDateTime fechaPublicacion;
 }

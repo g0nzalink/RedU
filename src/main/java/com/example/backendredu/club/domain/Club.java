@@ -1,10 +1,7 @@
 package com.example.backendredu.club.domain;
 
-import com.example.backendredu.pertenece.domain.Pertenece;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.util.List;
 
 @Entity
 @Table(name = "clubs")
@@ -19,8 +16,9 @@ public class Club {
 
     @Column(name = "descripcion")
     private String descripcion;
-
+/*
+    Por ahora no implementaremos foto
     @Column(name = "foto_perfil")
     private String fotoPerfil;
-    
+*/
 }

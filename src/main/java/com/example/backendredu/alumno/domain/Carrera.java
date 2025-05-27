@@ -1,4 +1,4 @@
-package com.example.backendredu.usuario.domain;
+package com.example.backendredu.alumno.domain;
 
 public enum Carrera {
     SISTEMAS_DE_INFORMACION,

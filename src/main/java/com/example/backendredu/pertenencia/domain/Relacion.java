@@ -1,4 +1,4 @@
-package com.example.backendredu.pertenece.domain;
+package com.example.backendredu.pertenencia.domain;
 
 public enum Relacion {
     ASESOR,
