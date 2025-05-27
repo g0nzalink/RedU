@@ -3,11 +3,15 @@ package com.example.backendredu.club.application;
 import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.club.domain.ClubService;
 import com.example.backendredu.club.dto.ClubResponseDto;
+import com.example.backendredu.pertenencia.domain.Pertenencia;
+import com.example.backendredu.pertenencia.domain.PertenenciaService;
+import com.example.backendredu.pertenencia.dto.PertenenciaRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -16,13 +20,26 @@ import java.util.List;
 public class ClubController {
     private final ClubService clubService;
 
+    private final PertenenciaService pertenenciaService;
+
     @GetMapping("/{email}")
     public ResponseEntity<ClubResponseDto> getClub(@PathVariable String email) {
         return ResponseEntity.ok(clubService.getClub(email));
     }
-
-
+    //TODO
 /*
+    @PostMapping("/seguir")
+    public ResponseEntity<Pertenencia> seguirClub(
+            @RequestBody PertenenciaRequestDto dto,
+            //@AuthenticationPrincipal UserDetails userDetails // si usas Spring Security
+    ) {
+        //String usuarioEmail = userDetails.getUsername();
+        Pertenencia pertenencia = pertenenciaService.crearPertenencia(usuarioEmail, dto);
+        return ResponseEntity.created(URI.create("http://localhost/proyecto/" + creado.getId())).body(creado);
+    }
+
+
+
     // ---- Controladores para utec admin -------
     // Controller para superadmin
     @PostMapping("")

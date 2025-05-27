@@ -14,11 +14,11 @@ public class Usuario {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "contrasenia")
+    private String password;
 
-    @Column(name = "last_names", nullable = false)
-    private String lastNames;
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "description")
     private String description;
