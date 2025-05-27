@@ -6,6 +6,7 @@ import com.example.backendredu.club.dto.ClubResponseDto;
 import com.example.backendredu.pertenencia.domain.Pertenencia;
 import com.example.backendredu.pertenencia.domain.PertenenciaService;
 import com.example.backendredu.pertenencia.dto.PertenenciaRequestDto;
+import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,12 @@ public class ClubController {
     public ResponseEntity<ClubResponseDto> getClub(@PathVariable String email) {
         return ResponseEntity.ok(clubService.getClub(email));
     }
+
+    @GetMapping
+    public ResponseEntity<List<Club>> listarPublicaciones() {
+        return ResponseEntity.ok(clubService.allClubs());
+    }
+
     //TODO
 /*
     @PostMapping("/seguir")

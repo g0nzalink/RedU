@@ -6,13 +6,17 @@ import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.pertenencia.domain.Pertenencia;
 import com.example.backendredu.pertenencia.domain.Relacion;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
+import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,12 @@ public class ClubService {
     public ClubResponseDto getClub(String email){
         Club club = clubRepository.findById(email).orElseThrow(() -> new EntityNotFoundException("No existe un club con el correo " + email));
         return modelMapper.map(club, ClubResponseDto.class);
+    }
+
+    @Transactional
+    public List<Club> allClubs() {
+        return clubRepository.findAll().stream()
+                .collect(Collectors.toList());
     }
 
     /*
