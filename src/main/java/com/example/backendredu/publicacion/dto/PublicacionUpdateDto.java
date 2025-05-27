@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PublicacionUpdateDto {
-    private String autor;
+
     private LocalDateTime fechaPublicacion;
     private LocalDateTime fechaModificacion;
     private String titulo;

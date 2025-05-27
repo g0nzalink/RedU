@@ -20,9 +20,10 @@ public class Publicacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "autor", nullable = false)
-    private String autor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "autor_email", referencedColumnName = "email", nullable = false)
+    private Usuario autor;
     
     @Column(name = "fechaPublicacion", nullable = false)
     private LocalDateTime fechaPublicacion;
@@ -39,7 +40,7 @@ public class Publicacion {
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comentario> listComentario = new ArrayList<>();
     
-        @Convert(converter = TagListConverter.class)
+    @Convert(converter = TagListConverter.class)
     @Column(name = "listTag", nullable = false)
     private List<Tag> listTag;
 

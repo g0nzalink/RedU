@@ -1,6 +1,6 @@
 package com.example.backendredu.auth;
 
-import com.example.backendredu.usuario.domain.Rol;
+import com.example.backendredu.usuario.domain.Role;
 import lombok.Data;
 
 @Data
@@ -8,5 +8,5 @@ public class AuthRequest {
     private String email;
     private String username;
     private String password;
-    private Rol role;
+    private Role role;
 }

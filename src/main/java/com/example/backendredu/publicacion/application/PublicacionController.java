@@ -12,6 +12,9 @@ import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -26,10 +29,15 @@ public class PublicacionController {
 
     private final ComentarioService comentarioService;
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
     @PostMapping
-    public ResponseEntity<PublicacionResponseDto> crearPublicacion(@RequestBody PublicacionRequestDto publicacion){
-        PublicacionResponseDto createdPublicacion = publicacionService.createPublicacion(publicacion);
-        return ResponseEntity.created(URI.create("http://localhost/publicacion/" + createdPublicacion.getId())).body(createdPublicacion);
+    public ResponseEntity<PublicacionResponseDto> crearPublicacion(
+            @RequestBody PublicacionRequestDto publicacion,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        PublicacionResponseDto created = publicacionService.createPublicacion(publicacion, userDetails.getUsername());
+        return ResponseEntity
+                .created(URI.create("http://localhost/publicacion/" + created.getId()))
+                .body(created);
     }
 
     @GetMapping
@@ -43,8 +51,14 @@ public class PublicacionController {
     }
 
     @PatchMapping("/actualizar/{id}")
-    public ResponseEntity<PublicacionResponseDto> actualizarPublicacion(@PathVariable Long id, @Valid @RequestBody PublicacionUpdateDto publicacion) {
-        return ResponseEntity.ok(publicacionService.actualizarPublicacion(publicacion, id));
+    public ResponseEntity<PublicacionResponseDto> actualizarPublicacion(
+            @PathVariable Long id,
+            @Valid @RequestBody PublicacionUpdateDto publicacion,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String emailLogeado = userDetails.getUsername();      // tu UserDetails debe usar el email como username
+        PublicacionResponseDto resp = publicacionService
+                .actualizarPublicacion(publicacion, id, emailLogeado);
+        return ResponseEntity.ok(resp);
     }
 
     //Hasta aca son endpoints similares a los de proyecto, pero enfocados en publicacion

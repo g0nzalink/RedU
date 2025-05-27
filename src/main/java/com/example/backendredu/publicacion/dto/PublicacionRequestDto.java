@@ -15,9 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PublicacionRequestDto {
 
-    @NotBlank
-    private String autor;
-
     @NotNull
     private LocalDateTime fechaPublicacion;
 

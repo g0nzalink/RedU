@@ -14,7 +14,7 @@ import java.util.List;
 public class PublicacionResponseDto {
 
     private Long id;
-    private String autor;
+    private String autorUsername;
     private LocalDateTime fechaPublicacion;
     private LocalDateTime fechaModificacion;
     private String titulo;

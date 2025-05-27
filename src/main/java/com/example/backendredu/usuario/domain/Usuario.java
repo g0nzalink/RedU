@@ -17,7 +17,7 @@ public class Usuario {
     @Column(name = "contrasenia")
     private String password;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "description")
@@ -25,8 +25,7 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
-    private Rol userType;
-    
+    private Role userType;
 }
 
 

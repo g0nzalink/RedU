@@ -1,7 +1,7 @@
 package com.example.backendredu.alumno.domain;
 
 import com.example.backendredu.usuario.domain.Usuario;
-import com.example.backendredu.usuario.domain.Rol;
+import com.example.backendredu.usuario.domain.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,6 +19,6 @@ public class Alumno extends Usuario {
     
     @PrePersist
     public void asignarRol() {
-        this.setUserType(Rol.ALUMNO);
+        this.setUserType(Role.ALUMNO);
     }
 }
