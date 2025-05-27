@@ -9,6 +9,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,9 +39,10 @@ public class Publicacion {
     @JoinColumn(name = "listApoyo")
     private List<Usuario> listApoyo;
 */
-    @OneToMany
+
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "listComentario")
-    private List<Comentario> listComentario;
+    private List<Comentario> listComentario = new ArrayList<>();
     
     @Convert(converter = TagListConverter.class)
     @Column(name = "listTag", nullable = false)

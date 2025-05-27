@@ -1,5 +1,7 @@
 package com.example.backendredu.comentario.domain;
 
+import com.example.backendredu.publicacion.domain.Publicacion;
+import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,8 +19,13 @@ public class Comentario{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "publicacion_de_origen", nullable = false)
-	private Long publicacionId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "publicacion_id", nullable = false)
+	private Publicacion publicacion;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "usuario_id", nullable = false)
+	private Usuario autor;
 
 	@Column(name = "contenido", nullable = false)
 	private String contenido;

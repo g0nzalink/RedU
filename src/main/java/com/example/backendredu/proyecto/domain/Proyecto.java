@@ -3,8 +3,10 @@ package com.example.backendredu.proyecto.domain;
 import com.example.backendredu.profesor.domain.Departamento;
 import com.example.backendredu.publicacion.domain.Publicacion;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 public class Proyecto extends Publicacion {
 
     @Enumerated(EnumType.STRING)
