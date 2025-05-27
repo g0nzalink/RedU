@@ -4,6 +4,9 @@ import com.example.backendredu.comentario.domain.Comentario;
 import com.example.backendredu.comentario.domain.ComentarioService;
 import com.example.backendredu.publicacion.domain.Publicacion;
 import com.example.backendredu.publicacion.domain.PublicacionService;
+import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
+import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,26 +24,24 @@ public class PublicacionController {
     private final ComentarioService comentarioService;
 
     @PostMapping("/publicacion")
-    public ResponseEntity<Publicacion> crearPublicacion(@RequestBody Publicacion publicacion){
-        Publicacion createdPublicacion = publicacionService.createPublicacion(publicacion);
+    public ResponseEntity<PublicacionResponseDto> crearPublicacion(@RequestBody PublicacionRequestDto publicacion){
+        PublicacionResponseDto createdPublicacion = publicacionService.createPublicacion(publicacion);
         return ResponseEntity.created(URI.create("http://localhost/publicacion/" + createdPublicacion.getId())).body(createdPublicacion);
     }
 
     @GetMapping
-    public ResponseEntity<List<Publicacion>> listarPublicaciones() {
-        List<Publicacion> publicaciones = publicacionService.allPublicaciones();
-        return ResponseEntity.ok(publicaciones);
+    public ResponseEntity<List<PublicacionResponseDto>> listarPublicaciones() {
+        return ResponseEntity.ok(publicacionService.allPublicaciones());
     }
 
     @GetMapping("/{idPublicacion}")
-    public ResponseEntity<Publicacion> getPublicacion(@PathVariable("idPublicacion") Long idPub){
-            return ResponseEntity.ok(publicacionService.getPublicacionById(idPub));
+    public ResponseEntity<PublicacionResponseDto> getPublicacion(@PathVariable Long idPublicacion) {
+            return ResponseEntity.ok(publicacionService.getPublicacionById(idPublicacion));
     }
 
-    @PatchMapping("/actualizar/{publicacionId}")
-    public ResponseEntity<Publicacion> actualizarPublicacion(@RequestBody Publicacion publicacion, @PathVariable Long publicacionId){
-        Publicacion actualizado = publicacionService.actualizarPublicacion(publicacion, publicacionId);
-        return ResponseEntity.ok(actualizado);
+    @PatchMapping("/{id}")
+    public ResponseEntity<PublicacionResponseDto> actualizarPublicacion(@PathVariable Long id, @Valid @RequestBody PublicacionRequestDto publicacion) {
+        return ResponseEntity.ok(publicacionService.actualizarPublicacion(publicacion, id));
     }
 
     //Hasta aca son endpoints similares a los de proyecto, pero enfocados en publicacion

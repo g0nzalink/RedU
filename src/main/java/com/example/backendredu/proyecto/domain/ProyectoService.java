@@ -1,11 +1,15 @@
 package com.example.backendredu.proyecto.domain;
 
+import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
+import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
 import com.example.backendredu.proyecto.infrastructure.ProyectoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,22 +19,32 @@ public class ProyectoService {
 
     private final ProyectoRepository proyectoRepository;
 
+    private final ModelMapper modelMapper;
+
     @Transactional
-    public Proyecto crearProyecto(Proyecto proyecto){
-        return proyectoRepository.save(proyecto);
+    public ProyectoResponseDto crearProyecto(ProyectoRequestDto proyectoDto){
+        Proyecto proyecto = modelMapper.map(proyectoDto, Proyecto.class);
+
+        Proyecto saved = proyectoRepository.save(proyecto);
+
+        return modelMapper.map(saved, ProyectoResponseDto.class);
     }
 
     @Transactional
-    public List<Proyecto> allProyectos(){
+    public List<ProyectoResponseDto> allProyectos() {
         return proyectoRepository.findAll().stream()
+                .map(p -> modelMapper.map(p, ProyectoResponseDto.class))
                 .collect(Collectors.toList());
     }
 
-    public Proyecto obtenerProyecto(Long proyectoId){
-        return proyectoRepository.findById(proyectoId).get();
+    public ProyectoResponseDto obtenerProyecto(Long id) {
+        Proyecto p = proyectoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No existe"));
+        return modelMapper.map(p, ProyectoResponseDto.class);
     }
 
-    public Proyecto actualizarProyecto(Proyecto newproyecto, Long proyectoId){
+    @Transactional
+    public ProyectoResponseDto actualizarProyecto(ProyectoRequestDto newproyecto, Long proyectoId){
         Proyecto proyecto = proyectoRepository.findById(proyectoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proyecto no encontrado"));
 
@@ -46,7 +60,9 @@ public class ProyectoService {
         if (newproyecto.getFechaModificacion() != null) {
             proyecto.setFechaModificacion(newproyecto.getFechaModificacion());
         }
+        proyecto.setFechaModificacion(LocalDateTime.now());
 
-        return proyectoRepository.save(proyecto);
+        Proyecto updated = proyectoRepository.save(proyecto);
+        return modelMapper.map(updated, ProyectoResponseDto.class);
     }
 }
