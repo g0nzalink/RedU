@@ -14,9 +14,6 @@ public class Alumno extends Usuario {
     @Enumerated(EnumType.STRING)
     @Column(name = "carrera", nullable = false)
     private Carrera carrera;
-
-    @Column(name = "facultad", nullable = false)
-    private String facultad;
     
     @PrePersist
     public void asignarRol() {

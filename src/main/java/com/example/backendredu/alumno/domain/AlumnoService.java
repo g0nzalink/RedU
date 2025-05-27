@@ -33,12 +33,13 @@ public class AlumnoService {
 		return modelMapper.map(alumno, AlumnoResponseDto.class);
 	}
 
-	public void register(String email, String username, String password) {
+	public void register(String email, String username, String password, Carrera carrera) {
 		Alumno alumno = new Alumno();
 		alumno.setEmail(email);
 		alumno.setUsername(username);
 		alumno.setPassword(encoder.encode(password));
 		alumno.setUserType(Role.ALUMNO);
+		alumno.setCarrera(carrera);
 		alumnoRepository.save(alumno);
 	}
 

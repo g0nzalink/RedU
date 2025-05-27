@@ -4,6 +4,7 @@ import com.example.backendredu.alumno.domain.Alumno;
 import com.example.backendredu.auth.AuthRequest;
 import com.example.backendredu.profesor.domain.Profesor;
 import com.example.backendredu.profesor.domain.ProfesorService;
+import com.example.backendredu.profesor.dto.ProfesorRequestDto;
 import com.example.backendredu.profesor.dto.ProfesorResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class ProfesorController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AuthRequest request) {
-        profesorService.register(request.getEmail(), request.getUsername(), request.getPassword());
+    public ResponseEntity<?> register(@RequestBody ProfesorRequestDto request) {
+        profesorService.register(request.getEmail(), request.getUsername(), request.getPassword(),request.getDepartamento());
         return ResponseEntity.ok("Usuario registrado");
     }
 }

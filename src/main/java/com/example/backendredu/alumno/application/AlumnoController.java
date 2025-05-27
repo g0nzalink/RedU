@@ -3,6 +3,7 @@ package com.example.backendredu.alumno.application;
 import com.example.backendredu.alumno.domain.Alumno;
 import com.example.backendredu.alumno.domain.AlumnoService;
 
+import com.example.backendredu.alumno.dto.AlumnoRequestDto;
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.auth.AuthRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,8 @@ public class AlumnoController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> register(@RequestBody AuthRequest request) {
-		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword());
+	public ResponseEntity<?> register(@RequestBody AlumnoRequestDto request) {
+		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword(), request.getCarrera());
 		return ResponseEntity.ok("Usuario registrado");
 	}
 

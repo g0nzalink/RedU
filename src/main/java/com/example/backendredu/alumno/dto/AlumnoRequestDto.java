@@ -16,16 +16,14 @@ public class AlumnoRequestDto {
     private String email;
 
     @NotBlank
-    private String name;
+    private String username;
 
     @NotBlank
-    private String lastNames;
+    private String password;
 
     private String description;
 
     @NotNull
     private Carrera carrera;
 
-    @NotBlank
-    private String facultad;
 }

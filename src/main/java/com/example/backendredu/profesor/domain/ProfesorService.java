@@ -22,11 +22,13 @@ public class ProfesorService {
         return modelMapper.map(profesor, ProfesorResponseDto.class);
     }
 
-    public void register(String email, String username, String password) {
+    public void register(String email, String username, String password, Departamento departamento) {
         Profesor profesor = new Profesor();
         profesor.setEmail(email);
         profesor.setUsername(username);
+        profesor.setPassword(password);
         profesor.setUserType(Role.PROFESOR);
+        profesor.setDepartamento(departamento);
         profesorRepository.save(profesor);
     }
 }
