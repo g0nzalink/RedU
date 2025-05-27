@@ -6,9 +6,13 @@ import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -18,7 +22,7 @@ public class ProyectoController {
 
     private final ProyectoService proyectoService;
 
-    //Actualmente la implementacion es basica, de ahi se cambiara a DTO y de ahi a una revision con spring security
+    @PreAuthorize("hasAnyRole('ALUMNO', 'PROFESOR')")
     @PostMapping
     public ResponseEntity<ProyectoResponseDto> crearProyecto(@RequestBody ProyectoRequestDto proyectoDto){
         ProyectoResponseDto creado = proyectoService.crearProyecto(proyectoDto);
@@ -38,11 +42,13 @@ public class ProyectoController {
         return ResponseEntity.ok(proyectoService.obtenerProyecto(proyectoId));
     }
 
-    //Implementar que el usuario creador pueda modificar el proyecto, incluye el modificar el status
-    //Falta implementar una mejor logica con dtos
     @PatchMapping("/actualizar/{proyectoId}")
-    public ResponseEntity<ProyectoResponseDto> actualizarProyecto(@RequestBody ProyectoRequestDto proyecto, @PathVariable Long proyectoId){
-        ProyectoResponseDto actualizado = proyectoService.actualizarProyecto(proyecto, proyectoId);
+    public ResponseEntity<ProyectoResponseDto> actualizarProyecto(
+            @RequestBody ProyectoRequestDto proyecto,
+            @PathVariable Long proyectoId,
+            @AuthenticationPrincipal UserDetails userDetails){
+        String emailLogeado = userDetails.getUsername();
+        ProyectoResponseDto actualizado = proyectoService.actualizarProyecto(proyecto, proyectoId, emailLogeado);
         return ResponseEntity.ok(actualizado);
     }
 }

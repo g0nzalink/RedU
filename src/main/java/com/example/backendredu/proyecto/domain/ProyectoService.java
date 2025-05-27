@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -44,9 +45,14 @@ public class ProyectoService {
     }
 
     @Transactional
-    public ProyectoResponseDto actualizarProyecto(ProyectoRequestDto newproyecto, Long proyectoId){
+    public ProyectoResponseDto actualizarProyecto(ProyectoRequestDto newproyecto, Long proyectoId, String emailLogeado) {
         Proyecto proyecto = proyectoRepository.findById(proyectoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proyecto no encontrado"));
+
+        String emailAutor = proyecto.getAutor().getEmail();
+        if (!emailAutor.equals(emailLogeado)) {
+            throw new AccessDeniedException("Solo el autor puede actualizar esta publicación");
+        }
 
         if(newproyecto.getStatus() != null){
             proyecto.setStatus(newproyecto.getStatus());
