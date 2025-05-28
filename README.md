@@ -109,10 +109,10 @@ Las organizacicones estudiantiles como tal presentan proyectos o actividades las
 
 | Entidad      | Atributos Principales                                                                                       | Relaciones                                                                                                   |
 |--------------|-------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| **Club**       | email, nombre, descripcion, foto_perfil (opcional), num_follow                                                        | Tiene muchos `miembros` (entidad `Pertenece`) <br> Tiene muchos `seguidores` (`Usuario`)                    |
-| **Usuario**    | email, nombre, apellidos, descripcion, foto_perfil (opcional), tipo_usuario (Rol), publicaciones_likeadas           | Puede pertenecer a muchos clubes (`Pertenece`) <br> Puede seguir clubes <br> Puede apoyar publicaciones     |
-| **Alumno**     | Hereda de `Usuario`, tipo_usuario = Estudiante, carrera (Carrera), facultad (Facultad)                              | —                                                                                                            |
-| **Profesor**   | Hereda de `Usuario`, tipo_usuario = Profesor, departamento (Departamento)                                            | —                                                                                                            |
+| **Club**       | email, nombre, descripcion, num_follow   | Tiene muchos `miembros` (entidad `Pertenece`) <br> Tiene muchos `seguidores` (`Usuario`)                    |
+| **Usuario**    | email, nombre, apellidos, descripcion, tipo_usuario (Rol), publicaciones_likeadas| Puede pertenecer a muchos clubes (`Pertenece`) <br> Puede seguir clubes <br> Puede apoyar publicaciones    |
+| **Alumno**     | Hereda de `Usuario`, tipo_usuario = Estudiante, carrera (Carrera), facultad (Facultad)| Un Alumno puede crear proyectos|
+| **Profesor**   | Hereda de `Usuario`, tipo_usuario = Profesor, departamento (Departamento)| Un Profesor puede crear proyectos|
 | **Pertenece**  | usuario_email, club_email, fecha_union (nullable), relacion (Relación)                                               | Representa la relación entre un `Usuario` y un `Club`                                                        |
 | **Publicación**| id, fecha_publicacion, ultima_modificacion, titulo, descripcion, proyecto (bool), tag, num_apoyo, num_comentarios   | Tiene lista de apoyo (`Usuario`) <br> Tiene lista de comentarios <br> Puede estar asociada a un `Proyecto`  |
 | **Proyecto**   | id (hereda de Publicación), proyecto = true, status (Status), fecha_cierre, personas_buscadas                        | Es una `Publicación` con campo `proyecto = true`                                                             |
