@@ -13,11 +13,9 @@ import lombok.NoArgsConstructor;
 public class ProfesorResponseDto {
 
     private String email;
-    private String name;
-    private String lastNames;
+    private String username;
     private String description;
-    private Role userType;        // puede ser profesor
-    private Carrera carrera;
+    private Role userType;
     private Departamento departamento;
 
 }

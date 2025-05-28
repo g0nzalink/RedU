@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .authenticationProvider(((ProviderManager) authManager).getProviders().get(0))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        //.requestMatchers("publicacion/**").permitAll()
+                        .requestMatchers("alumno/**").permitAll()
+                        .requestMatchers("profesor/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

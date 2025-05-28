@@ -3,6 +3,8 @@ package com.example.backendredu;
 
 import com.example.backendredu.alumno.exceptions.AlumnoNotFoundException;
 import com.example.backendredu.club.exceptions.ClubNotFoundException;
+import com.example.backendredu.exceptions.EmailAlreadyExistsException;
+import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
 import com.example.backendredu.publicacion.exception.PublicacionNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,17 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(AccessDeniedException.class)
 	public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+	}
+
+	// Excepciones de registro :0
+	@ExceptionHandler(EmailAlreadyExistsException.class)
+	public ResponseEntity<String> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+	}
+
+	@ExceptionHandler(UsernameAlreadyExistsException.class)
+	public ResponseEntity<String> handleUsernameAlreadyExists(UsernameAlreadyExistsException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
 	}
 
 }

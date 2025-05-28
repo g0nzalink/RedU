@@ -7,6 +7,7 @@ import com.example.backendredu.profesor.domain.ProfesorService;
 import com.example.backendredu.profesor.dto.ProfesorRequestDto;
 import com.example.backendredu.profesor.dto.ProfesorResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class ProfesorController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody ProfesorRequestDto request) {
         profesorService.register(request.getEmail(), request.getUsername(), request.getPassword(),request.getDepartamento());
-        return ResponseEntity.ok("Usuario registrado");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado");
     }
 }
 
