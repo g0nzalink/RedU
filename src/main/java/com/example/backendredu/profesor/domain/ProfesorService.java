@@ -1,8 +1,12 @@
 package com.example.backendredu.profesor.domain;
 
+import com.example.backendredu.exceptions.EmailAlreadyExistsException;
+import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
 import com.example.backendredu.profesor.dto.ProfesorResponseDto;
 import com.example.backendredu.profesor.infrastructure.ProfesorRepository;
 import com.example.backendredu.usuario.domain.Role;
+import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,6 +19,7 @@ public class ProfesorService {
     private final ProfesorRepository profesorRepository;
 
     private final ModelMapper modelMapper;
+    private final UsuarioRepository usuarioRepository;
 
     public ProfesorResponseDto getProfesorById (String correo) {
         Profesor profesor = profesorRepository.findById(correo)
@@ -23,6 +28,14 @@ public class ProfesorService {
     }
 
     public void register(String email, String username, String password, Departamento departamento) {
+        if (usuarioRepository.existsById(email)) {
+            throw new EmailAlreadyExistsException("Email ya registrado");
+        }
+
+        if (usuarioRepository.existsByUsername(username)) {
+            throw new UsernameAlreadyExistsException("Nombre de usuario ya registrado");
+        }
+
         Profesor profesor = new Profesor();
         profesor.setEmail(email);
         profesor.setUsername(username);
