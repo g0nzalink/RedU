@@ -35,7 +35,7 @@ public class AlumnoController {
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody AlumnoRequestDto request) {
 		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword(), request.getCarrera());
-		applicationEventPublisher.publishEvent(new AlumnoEmailEvent(new AlumnoEventDto(request.getEmail(), "Hola, " + request.getEmail() + "!", "Te has logueado correctamente a RedU! \n Si no fuiste tú, por favor responde a este correo.")));
+		applicationEventPublisher.publishEvent(new AlumnoEmailEvent(new AlumnoEventDto(request.getEmail(), "Hola, " + request.getEmail() + "!", "Te has logueado correctamente a RedU! \n\n Si no fuiste tú, por favor responde a este correo sobre el problema y desactivaremos la cuenta. \n\n Gracias por unirte a RedU!")));
 		return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado");
 	}
 

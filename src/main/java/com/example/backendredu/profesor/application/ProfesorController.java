@@ -33,7 +33,7 @@ public class ProfesorController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody ProfesorRequestDto request) {
         profesorService.register(request.getEmail(), request.getUsername(), request.getPassword(),request.getDepartamento());
-        applicationEventPublisher.publishEvent(new ProfesorEmailEvent(new ProfesorEventDto(request.getEmail(), "Hola, " + request.getEmail() + "!", "Te has logueado correctamente a RedU! \n Si no fuiste tú, por favor responde a este correo.")));
+        applicationEventPublisher.publishEvent(new ProfesorEmailEvent(new ProfesorEventDto(request.getEmail(), "Hola, profesor(a) " + request.getEmail() + "!", "Se ha logueado correctamente a RedU! \n\n Si no fue usted, por favor responda a este correo con su problema. \n\n Gracias por unirse a RedU!")));
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado");
     }
 }
