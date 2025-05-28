@@ -6,8 +6,11 @@ import com.example.backendredu.alumno.domain.Carrera;
 import com.example.backendredu.alumno.dto.AlumnoRequestDto;
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.auth.JwtService;
+import com.example.backendredu.exceptions.EmailAlreadyExistsException;
+import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
 import com.example.backendredu.usuario.domain.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -98,4 +101,50 @@ public class AlumnoControllerIntegrationTest {
         );
     }
 
+    @Test
+    void getAlumno_shouldReturnNotFoundWhenAlumnoDoesNotExist() throws Exception {
+        String email = "goofy@utec.edu.pe";
+        when(alumnoService.getAlumnoById(email)).thenThrow(new EntityNotFoundException("Alumno no encontrado"));
+
+        mockMvc.perform(get("/alumno/{email}", email))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Alumno no encontrado"));
+    }
+
+    @Test
+    void register_shouldReturnConflictWhenEmailExists() throws Exception {
+        AlumnoRequestDto request = new AlumnoRequestDto();
+        request.setEmail(alumno.getEmail());
+        request.setUsername(alumno.getUsername());
+        request.setPassword(alumno.getPassword());
+        request.setCarrera(alumno.getCarrera());
+
+        doThrow(new EmailAlreadyExistsException("Email ya registrado"))
+                .when(alumnoService).register(anyString(), anyString(), anyString(), any());
+
+        mockMvc.perform(post("/alumno/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(content().string("Email ya registrado"));
+    }
+
+    @Test
+    void register_shouldReturnConflictWhenUsernameExists() throws Exception {
+        AlumnoRequestDto request = new AlumnoRequestDto();
+        request.setEmail(alumno.getEmail());
+        request.setUsername(alumno.getUsername());
+        request.setPassword(alumno.getPassword());
+        request.setDescription(alumno.getDescription());
+        request.setCarrera(alumno.getCarrera());
+
+        doThrow(new UsernameAlreadyExistsException("Nombre de usuario ya registrado"))
+                .when(alumnoService).register(anyString(), anyString(), anyString(), any());
+
+        mockMvc.perform(post("/alumno/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(content().string("Nombre de usuario ya registrado"));
+    }
 }
