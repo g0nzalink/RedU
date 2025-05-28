@@ -8,6 +8,8 @@ import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.alumno.email.AlumnoEmailEvent;
 import com.example.backendredu.alumno.email.AlumnoEventDto;
 import com.example.backendredu.auth.AuthRequest;
+import com.example.backendredu.profesor.email.ProfesorEmailEvent;
+import com.example.backendredu.profesor.email.ProfesorEventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -33,7 +35,7 @@ public class AlumnoController {
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody AlumnoRequestDto request) {
 		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword(), request.getCarrera());
-		applicationEventPublisher.publishEvent(new AlumnoEmailEvent(new AlumnoEventDto(request.getEmail(), "Hola", "Te has logueado correctamente!")));
+		applicationEventPublisher.publishEvent(new AlumnoEmailEvent(new AlumnoEventDto(request.getEmail(), "Hola, " + request.getEmail() + "!", "Te has logueado correctamente a RedU! \n Si no fuiste tú, por favor responde a este correo.")));
 		return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado");
 	}
 
