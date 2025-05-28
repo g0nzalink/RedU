@@ -31,8 +31,6 @@ public class PublicacionController {
 
     private final ComentarioService comentarioService;
 
-    private final ModelMapper modelMapper;
-
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
     @PostMapping
     public ResponseEntity<PublicacionResponseDto> crearPublicacion(
