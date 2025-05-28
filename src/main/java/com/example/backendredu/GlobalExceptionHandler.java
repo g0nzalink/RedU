@@ -6,6 +6,7 @@ import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.exceptions.EmailAlreadyExistsException;
 import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
 import com.example.backendredu.publicacion.exception.PublicacionNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -45,4 +46,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
 	}
 
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+	}
 }
