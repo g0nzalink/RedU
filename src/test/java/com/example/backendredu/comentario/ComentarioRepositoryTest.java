@@ -64,7 +64,7 @@ public class ComentarioRepositoryTest {
 		publicacion.setFechaModificacion(LocalDateTime.now());
 		publicacion.setTitulo("Título de prueba");
 		publicacion.setDescripcion("Descripción");
-		publicacion.setListTag(List.of()); // lista vacía
+		publicacion.setListTag(List.of());
 		publicacion.setEsProyecto(false);
 		publicacion = publicacionRepository.save(publicacion);
 		

@@ -36,18 +36,14 @@ class ClubServiceTest {
 	
 	@Test
 	void getClub_shouldReturnMappedClub_whenClubExists() {
-		// given
 		Club club = new Club();
 		club.setEmail("club1@utec.edu.pe");
 		club.setNombre("Club de Ciencia");
 		club.setDescripcion("Divulgación científica");
 		
 		when(clubRepository.findById("club1@utec.edu.pe")).thenReturn(Optional.of(club));
-		
-		// when
 		ClubResponseDto result = clubService.getClub("club1@utec.edu.pe");
 		
-		// then
 		assertThat(result)
 				.isNotNull()
 				.extracting("email", "nombre", "descripcion")
@@ -56,10 +52,8 @@ class ClubServiceTest {
 	
 	@Test
 	void getClub_shouldThrowException_whenClubDoesNotExist() {
-		// given
 		when(clubRepository.findById("inexistente@utec.edu.pe")).thenReturn(Optional.empty());
 		
-		// then
 		assertThatThrownBy(() -> clubService.getClub("inexistente@utec.edu.pe"))
 				.isInstanceOf(EntityNotFoundException.class)
 				.hasMessageContaining("No existe un club con el correo");
@@ -67,18 +61,15 @@ class ClubServiceTest {
 	
 	@Test
 	void allClubs_shouldReturnListOfClubs() {
-		// given
 		Club c1 = new Club();
 		c1.setEmail("club1@utec.edu.pe");
+		
 		Club c2 = new Club();
 		c2.setEmail("club2@utec.edu.pe");
 		
 		when(clubRepository.findAll()).thenReturn(List.of(c1, c2));
-		
-		// when
 		List<Club> result = clubService.allClubs();
 		
-		// then
 		assertThat(result)
 				.hasSize(2)
 				.extracting(Club::getEmail)

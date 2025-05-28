@@ -10,7 +10,6 @@ import com.example.backendredu.publicacion.infrastructure.PublicacionRepository;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 
@@ -50,7 +49,6 @@ class ComentarioServiceTest {
 	
 	@Test
 	void testCrearComentario() {
-		// Arrange
 		ComentarioRequestDto requestDto = new ComentarioRequestDto();
 		requestDto.setContenido("Comentario de prueba");
 		
@@ -73,17 +71,13 @@ class ComentarioServiceTest {
 					return dto;
 				});
 		
-		// Act
 		ComentarioResponseDto responseDto = comentarioService.crearComentario(requestDto, 1L);
-		
-		// Assert
 		assertEquals("Comentario de prueba", responseDto.getContenido());
 		assertEquals(1, publicacion.getListComentario().size());
 	}
 	
 	@Test
 	void testListarComentarios() {
-		// Arrange
 		Publicacion pub = new Publicacion();
 		pub.setId(1L);
 		
@@ -115,10 +109,8 @@ class ComentarioServiceTest {
 					dto.setContenido(c.getContenido());
 					return dto;
 				});
-		// Act
 		List<ComentarioResponseDto> resultado = comentarioService.listarComentarios(1L);
 		
-		// Assert
 		assertEquals(2, resultado.size());
 		assertEquals("Comentario 1", resultado.get(0).getContenido());
 		assertEquals("Comentario 2", resultado.get(1).getContenido());
