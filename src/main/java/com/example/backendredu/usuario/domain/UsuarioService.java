@@ -1,6 +1,8 @@
 package com.example.backendredu.usuario.domain;
 
 import com.example.backendredu.auth.JwtService;
+import com.example.backendredu.exceptions.EmailAlreadyExistsException;
+import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,13 @@ public class UsuarioService implements UserDetailsService {
 	private JwtService jwtService;
 
 	public void register(Role rol, String email, String username, String password) {
+		if (userRepository.existsById(email)) {
+			throw new EmailAlreadyExistsException(email);
+		}
+
+		if (userRepository.existsByUsername(username)) {
+			throw new UsernameAlreadyExistsException("Nombre usuario ya registrado");
+		}
 		Usuario user = new Usuario();
 		user.setEmail(email);
 		user.setUsername(username);
