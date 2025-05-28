@@ -7,6 +7,7 @@ import com.example.backendredu.alumno.dto.AlumnoRequestDto;
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.auth.AuthRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class AlumnoController {
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody AlumnoRequestDto request) {
 		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword(), request.getCarrera());
-		return ResponseEntity.ok("Usuario registrado");
+		return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado");
 	}
 
 	/*

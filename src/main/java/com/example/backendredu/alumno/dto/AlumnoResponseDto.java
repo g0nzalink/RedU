@@ -12,11 +12,9 @@ import lombok.NoArgsConstructor;
 public class AlumnoResponseDto {
 
     private String email;
-    private String name;
-    private String lastNames;
+    private String username;
     private String description;
-    private Role userType;        // puede ser alumno
+    private Role userType;
     private Carrera carrera;
-    private String facultad;
 
 }

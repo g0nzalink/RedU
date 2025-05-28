@@ -2,8 +2,11 @@ package com.example.backendredu.alumno.domain;
 
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.alumno.infrastructure.AlumnoRepository;
+import com.example.backendredu.exceptions.EmailAlreadyExistsException;
+import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
 import com.example.backendredu.usuario.domain.Role;
 import com.example.backendredu.usuario.domain.Usuario;
+import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,8 @@ public class AlumnoService {
 
 	@Autowired
 	private PasswordEncoder encoder;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
 	@Transactional
 	public AlumnoResponseDto getAlumnoById(String email) {
@@ -34,6 +39,14 @@ public class AlumnoService {
 	}
 
 	public void register(String email, String username, String password, Carrera carrera) {
+		if (usuarioRepository.existsById(email)) {
+			throw new EmailAlreadyExistsException("Email ya registrado");
+		}
+
+		if (usuarioRepository.existsByUsername(username)) {
+			throw new UsernameAlreadyExistsException("Nombre de usuario ya registrado");
+		}
+
 		Alumno alumno = new Alumno();
 		alumno.setEmail(email);
 		alumno.setUsername(username);
