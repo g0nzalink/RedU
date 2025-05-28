@@ -5,8 +5,11 @@ import com.example.backendredu.alumno.domain.AlumnoService;
 
 import com.example.backendredu.alumno.dto.AlumnoRequestDto;
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
+import com.example.backendredu.alumno.email.AlumnoEmailEvent;
+import com.example.backendredu.alumno.email.AlumnoEventDto;
 import com.example.backendredu.auth.AuthRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +22,18 @@ import java.util.List;
 public class AlumnoController {
 
 	private final AlumnoService alumnoService;
+	
+	private final ApplicationEventPublisher applicationEventPublisher;
 
 	@GetMapping("/{email}")
-	public ResponseEntity<AlumnoResponseDto> getAlumno(
-			@PathVariable String email) {
-
+	public ResponseEntity<AlumnoResponseDto> getAlumno(@PathVariable String email) {
 		return ResponseEntity.ok(alumnoService.getAlumnoById(email));
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestBody AlumnoRequestDto request) {
 		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword(), request.getCarrera());
+		applicationEventPublisher.publishEvent(new AlumnoEmailEvent(new AlumnoEventDto(request.getEmail(), "Hola", "Te has logueado correctamente!")));
 		return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado");
 	}
 
