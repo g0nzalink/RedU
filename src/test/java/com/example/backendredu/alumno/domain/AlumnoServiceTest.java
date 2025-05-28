@@ -3,7 +3,7 @@ package com.example.backendredu.alumno.domain;
 import com.example.backendredu.alumno.dto.AlumnoResponseDto;
 import com.example.backendredu.alumno.exceptions.AlumnoNotFoundException;
 import com.example.backendredu.alumno.infrastructure.AlumnoRepository;
-import com.example.backendredu.alumno.infrastructure.AlumnoRepositoryTest;
+//  import com.example.backendredu.alumno.infrastructure.AlumnoRepositoryTest;
 import com.example.backendredu.usuario.domain.Role;
 import jakarta.persistence.EntityNotFoundException;
 import org.checkerframework.checker.units.qual.A;
