@@ -73,70 +73,54 @@ public class ClubController {
                 .toList();
         return ResponseEntity.ok(dtos);
     }
-/*
 
-    // ---- Controladores para utec admin -------
-    // Controller para superadmin
-    @PostMapping("")
-    public ResponseEntity<Club> createClub(@RequestBody Club club) {
-        Club created = clubService.createClub(club);
-        return ResponseEntity.ok(created);
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PostMapping("/{clubId}/designarDirectiva/{usuarioEmail}")
+    public ResponseEntity<Pertenencia> designarDirectiva(
+            @PathVariable String clubId,
+            @PathVariable String usuarioEmail
+    ) {
+        Pertenencia p = pertenenciaService.designarDirectiva(usuarioEmail, clubId);
+        return ResponseEntity
+                .created(URI.create("/club/" + clubId + "/directiva/" + usuarioEmail))
+                .body(p);
     }
 
-    // Controller para superadmin
-    @DeleteMapping("/{email}")
-    public ResponseEntity<Club> deleteClub(@PathVariable String email) {
-        clubService.deleteClub(email);
-        return ResponseEntity.ok().build();
+    @PreAuthorize("hasAnyRole('DIRECTIVA')")
+    @PostMapping("/{clubId}/miembro/{nuevoEmail}")
+    public ResponseEntity<Pertenencia> newMiembro(
+            @PathVariable String clubId,
+            @PathVariable("nuevoEmail") String nuevoMiembroEmail,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String operadorEmail = userDetails.getUsername();
+        Pertenencia p = pertenenciaService
+                .crearPertenenciaMiembro(operadorEmail, nuevoMiembroEmail, clubId);
+        return ResponseEntity
+                .created(URI.create("/club/" + clubId + "/miembro/" + nuevoMiembroEmail))
+                .body(p);
     }
 
-    @GetMapping("/{email}/directive")
-    public ResponseEntity<?> getDirective(@PathVariable String email) {
-        return null;
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @DeleteMapping("/{clubId}/directiva/{usuarioEmail}")
+    public ResponseEntity<Void> eliminarDirectiva(
+            @PathVariable String clubId,
+            @PathVariable String usuarioEmail
+    ) {
+        pertenenciaService.eliminarRelacionDirectiva(usuarioEmail, clubId);
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{email}/directive/add")
-    public ResponseEntity<?> addMember(@PathVariable String email) {
-        return null;
+    @PreAuthorize("hasAnyRole('DIRECTIVA')")
+    @DeleteMapping("/{clubId}/miembro/{usuarioEmail}")
+    public ResponseEntity<Void> eliminarMiembro(
+            @PathVariable String clubId,
+            @PathVariable String usuarioEmail,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String operadorEmail = userDetails.getUsername();
+        pertenenciaService.eliminarRelacionMiembro(operadorEmail, usuarioEmail, clubId);
+        return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/{email}/directive/remove")
-    public ResponseEntity<?> removeMember(@PathVariable String email) {
-        return null;
-    }
-
-    // ¿Se debería poder solicitir ser miembro de un club o  se maneja en la vida real?
-
-    // ------- Controladores para todos -------
-    // Controller para todos
-
-
-    // Controller para todos
-    @GetMapping("")
-    public ResponseEntity<List<Club>> getClubs() {
-        return ResponseEntity.ok(clubService.getClubs());
-    }
-
-    // Controller para todos
-    @GetMapping("/{email}/followers")
-    public ResponseEntity<?> getFollowers(@PathVariable String email) {
-        return null;
-    }
-
-    // Controller para todos
-    @GetMapping("/{email}/posts")
-    public ResponseEntity<?> getPosts(@PathVariable String email) {
-        return null;
-    }
-
-    // Endpoint para ver publicaciones por nombre y tag.
-    @GetMapping("/{email}/publicaciones")
-    public ResponseEntity<?> getPublicaciones(@PathVariable String email, @RequestParam String tag, @RequestParam String nombre) {
-        return null;
-    }
-    // ¿Seguir y dejar de seguir debería también ser endpoints?
-    // ¿Debería estar el endpoint para publicar un post aquí o en publicaciones?
-
- */
 }
 

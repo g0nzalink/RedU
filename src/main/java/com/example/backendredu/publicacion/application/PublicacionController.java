@@ -6,11 +6,13 @@ import com.example.backendredu.comentario.dto.ComentarioRequestDto;
 import com.example.backendredu.comentario.dto.ComentarioResponseDto;
 import com.example.backendredu.publicacion.domain.Publicacion;
 import com.example.backendredu.publicacion.domain.PublicacionService;
+import com.example.backendredu.publicacion.domain.Tag;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +30,8 @@ public class PublicacionController {
     private final PublicacionService publicacionService;
 
     private final ComentarioService comentarioService;
+
+    private final ModelMapper modelMapper;
 
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
     @PostMapping

@@ -3,11 +3,14 @@ package com.example.backendredu.proyecto.domain;
 import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
 import com.example.backendredu.proyecto.infrastructure.ProyectoRepository;
+import com.example.backendredu.usuario.domain.Usuario;
+import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,11 +23,18 @@ public class ProyectoService {
 
     private final ProyectoRepository proyectoRepository;
 
+    private final UsuarioRepository usuarioRepository;
+
     private final ModelMapper modelMapper;
 
     @Transactional
-    public ProyectoResponseDto crearProyecto(ProyectoRequestDto proyectoDto){
+    public ProyectoResponseDto crearProyecto(ProyectoRequestDto proyectoDto, String emailUsuario){
+        Usuario autor = usuarioRepository.findById(emailUsuario)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + emailUsuario));
+
         Proyecto proyecto = modelMapper.map(proyectoDto, Proyecto.class);
+
+        proyecto.setAutor(autor);
 
         Proyecto saved = proyectoRepository.save(proyecto);
 

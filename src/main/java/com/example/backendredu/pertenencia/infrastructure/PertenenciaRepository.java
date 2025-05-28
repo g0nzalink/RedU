@@ -12,11 +12,15 @@ import java.util.Optional;
 public interface PertenenciaRepository extends JpaRepository<Pertenencia, Long> {
 
 	boolean existsByUsuarioIdAndClubId(Usuario usuario, Club club);
+	boolean existsByRelacion(Relacion relacion);
 
-	//List<Pertenencia> findByClubIdEmail(String email);
+	boolean existsByUsuarioIdAndClubIdAndRelacion(Usuario usuario, Club club, Relacion relacion);
+
+	Optional<Pertenencia> findByUsuarioIdEmailAndClubIdEmailAndRelacion(
+			String usuarioEmail, String clubEmail, Relacion relacion);
 
 	List<Pertenencia> findByClubIdAndRelacion(Club club, Relacion relacion);
-	
+
 	Optional<Pertenencia> findByUsuarioIdEmailAndClubIdEmail(String userEmail, String clubEmail);
 }
 

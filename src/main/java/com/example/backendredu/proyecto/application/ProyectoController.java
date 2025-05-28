@@ -24,8 +24,10 @@ public class ProyectoController {
 
     @PreAuthorize("hasAnyRole('ALUMNO', 'PROFESOR')")
     @PostMapping
-    public ResponseEntity<ProyectoResponseDto> crearProyecto(@RequestBody ProyectoRequestDto proyectoDto){
-        ProyectoResponseDto creado = proyectoService.crearProyecto(proyectoDto);
+    public ResponseEntity<ProyectoResponseDto> crearProyecto(
+            @RequestBody ProyectoRequestDto proyectoDto,
+            @AuthenticationPrincipal UserDetails userDetails){
+        ProyectoResponseDto creado = proyectoService.crearProyecto(proyectoDto, userDetails.getUsername());
         return ResponseEntity.created(URI.create("http://localhost/proyecto/" + creado.getId())).body(creado);
     }
 
