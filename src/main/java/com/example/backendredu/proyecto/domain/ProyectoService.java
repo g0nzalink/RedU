@@ -37,8 +37,9 @@ public class ProyectoService {
         proyecto.setAutor(autor);
 
         Proyecto saved = proyectoRepository.save(proyecto);
-
-        return modelMapper.map(saved, ProyectoResponseDto.class);
+        ProyectoResponseDto proyectoResponseDto = modelMapper.map(saved, ProyectoResponseDto.class);
+        proyectoResponseDto.setAutor(autor.getUsername());
+        return proyectoResponseDto;
     }
 
     @Transactional

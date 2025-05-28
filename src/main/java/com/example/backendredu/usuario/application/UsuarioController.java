@@ -22,8 +22,8 @@ public class UsuarioController {
     //endpoint para que el admin tenga control sobre los usuarios registrados
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
-    public ResponseEntity<List<Usuario>> listarPublicaciones() {
-        return ResponseEntity.ok(usuarioService.allPublicaciones());
+    public ResponseEntity<List<Usuario>> listarUsuarios() {
+        return ResponseEntity.ok(usuarioService.allUsuarios());
     }
 }
 
