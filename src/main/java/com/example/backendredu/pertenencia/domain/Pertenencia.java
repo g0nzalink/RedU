@@ -1,8 +1,7 @@
-package com.example.backendredu.pertenece.domain;
+package com.example.backendredu.pertenencia.domain;
 
 
 import com.example.backendredu.club.domain.Club;
-import com.example.backendredu.proyecto.domain.Status;
 import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "pertenece")
 @Data
-public class Pertenece {
+public class Pertenencia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

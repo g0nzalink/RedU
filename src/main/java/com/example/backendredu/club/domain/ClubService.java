@@ -1,31 +1,45 @@
 package com.example.backendredu.club.domain;
 
+import com.example.backendredu.club.dto.ClubResponseDto;
 import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
-import com.example.backendredu.pertenece.domain.Pertenece;
-import com.example.backendredu.pertenece.domain.Relacion;
-import com.example.backendredu.pertenece.infrastructure.PerteneceRepository;
-import com.example.backendredu.usuario.domain.Rol;
-import com.example.backendredu.usuario.domain.Usuario;
+import com.example.backendredu.pertenencia.domain.Pertenencia;
+import com.example.backendredu.pertenencia.domain.Relacion;
+import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
+import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ClubService {
     private final ClubRepository clubRepository;
-    
-    private final PerteneceRepository perteneceRepository;
+
+    private final ModelMapper modelMapper;
+
+    private final PertenenciaRepository perteneceRepository;
     private final UsuarioRepository usuarioRepository;
-    
+
+    public ClubResponseDto getClub(String email){
+        Club club = clubRepository.findById(email).orElseThrow(() -> new EntityNotFoundException("No existe un club con el correo " + email));
+        return modelMapper.map(club, ClubResponseDto.class);
+    }
+
+    @Transactional
+    public List<Club> allClubs() {
+        return clubRepository.findAll().stream()
+                .collect(Collectors.toList());
+    }
+
+    /*
     public Club createClub(Club club) {
         if (clubRepository.existsById(club.getEmail())) {
             throw new IllegalArgumentException("Club ya existe con correo" + club.getEmail());
@@ -48,14 +62,15 @@ public class ClubService {
         if (usuarioRepository.existsById(userEmail)) {
             throw new EntityNotFoundException("Usuario no existe con correo" + userEmail);
         }
-        Optional<Pertenece> members = perteneceRepository.findByUsuarioIdEmailAndClubIdEmail(userEmail, clubEmail);
+        Optional<Pertenencia> members = perteneceRepository.findByUsuarioIdEmailAndClubIdEmail(userEmail, clubEmail);
         if (members.isEmpty()) {
             throw new EntityNotFoundException("No existe usuario de correo" + userEmail + "en el club de correo" + clubEmail);
         }
         
-        Pertenece pertenece = members.get();
+        Pertenencia pertenece = members.get();
         pertenece.setRelacion(relacion);
         perteneceRepository.save(pertenece);
     }
+     */
 }
 

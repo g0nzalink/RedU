@@ -1,7 +1,8 @@
 package com.example.backendredu.usuario.domain;
 
-public enum Rol {
+public enum Role {
     ALUMNO,
     PROFESOR,
-    DIRECTIVA
+    DIRECTIVA,
+    ADMINISTRADOR,
 }

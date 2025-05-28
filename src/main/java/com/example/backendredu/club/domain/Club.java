@@ -1,6 +1,6 @@
 package com.example.backendredu.club.domain;
 
-import com.example.backendredu.pertenece.domain.Pertenece;
+import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,8 +19,4 @@ public class Club {
 
     @Column(name = "descripcion")
     private String descripcion;
-
-    @Column(name = "foto_perfil")
-    private String fotoPerfil;
-    
 }

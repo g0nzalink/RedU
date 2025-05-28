@@ -2,8 +2,10 @@ package com.example.backendredu.alumno.application;
 
 import com.example.backendredu.alumno.domain.Alumno;
 import com.example.backendredu.alumno.domain.AlumnoService;
-import com.example.backendredu.club.domain.Club;
-import com.example.backendredu.publicacion.domain.Publicacion;
+
+import com.example.backendredu.alumno.dto.AlumnoRequestDto;
+import com.example.backendredu.alumno.dto.AlumnoResponseDto;
+import com.example.backendredu.auth.AuthRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +16,23 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/alumno")
 public class AlumnoController {
+
 	private final AlumnoService alumnoService;
-	
-	@GetMapping("/{correo}")
-	ResponseEntity<Alumno> getAlumnoById(@PathVariable String correo) {
-		Alumno alumno = alumnoService.getAlumnoById(correo);
-		return ResponseEntity.ok(alumno);
+
+	@GetMapping("/{email}")
+	public ResponseEntity<AlumnoResponseDto> getAlumno(
+			@PathVariable String email) {
+
+		return ResponseEntity.ok(alumnoService.getAlumnoById(email));
 	}
-	
+
+	@PostMapping("/register")
+	public ResponseEntity<?> register(@RequestBody AlumnoRequestDto request) {
+		alumnoService.register(request.getEmail(), request.getUsername(), request.getPassword(), request.getCarrera());
+		return ResponseEntity.ok("Usuario registrado");
+	}
+
+	/*
 	@GetMapping("/{correo}/likes")
 	ResponseEntity<List<Publicacion>> getAlumnoLikes(@PathVariable String correo) {
 		List<Publicacion> likes = alumnoService.getAlumnoLikes(correo);
@@ -39,6 +50,6 @@ public class AlumnoController {
 		Alumno alumno = alumnoService.updateAlumnoDescription(correo, newDesc);
 		return ResponseEntity.ok(alumno);
 	}
-	
+*/
 }
 
