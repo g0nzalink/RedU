@@ -10,6 +10,8 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +22,9 @@ public class ProfesorService {
 
     private final ModelMapper modelMapper;
     private final UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     public ProfesorResponseDto getProfesorById (String correo) {
         Profesor profesor = profesorRepository.findById(correo)
@@ -39,7 +44,7 @@ public class ProfesorService {
         Profesor profesor = new Profesor();
         profesor.setEmail(email);
         profesor.setUsername(username);
-        profesor.setPassword(password);
+        profesor.setPassword(encoder.encode(password));
         profesor.setUserType(Role.PROFESOR);
         profesor.setDepartamento(departamento);
         profesorRepository.save(profesor);

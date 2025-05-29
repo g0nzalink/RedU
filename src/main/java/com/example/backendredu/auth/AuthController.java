@@ -6,6 +6,7 @@ import com.example.backendredu.usuario.domain.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ public class AuthController {
     @Autowired
     private UsuarioService userService;
 
+    //Opcion para registrar cualquier tipo de usuario, solo los admins pueden hacerlo
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest request) {
         userService.register(request.getRole(),request.getEmail(), request.getUsername(), request.getPassword());

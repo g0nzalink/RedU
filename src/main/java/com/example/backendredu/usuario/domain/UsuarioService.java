@@ -66,7 +66,7 @@ public class UsuarioService implements UserDetailsService {
 	}
 
 	@Transactional
-	public List<Usuario> allPublicaciones() {
+	public List<Usuario> allUsuarios() {
 		return userRepository.findAll().stream()
 				.collect(Collectors.toList());
 	}

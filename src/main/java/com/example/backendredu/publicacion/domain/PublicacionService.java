@@ -38,7 +38,9 @@ public class PublicacionService {
         entidad.setEsProyecto(false);
 
         Publicacion saved = publicacionRepository.save(entidad);
-        return modelMapper.map(saved, PublicacionResponseDto.class);
+        PublicacionResponseDto publicacionResponseDto = modelMapper.map(saved, PublicacionResponseDto.class);
+        publicacionResponseDto.setAutorUsername(autor.getUsername());
+        return publicacionResponseDto;
     }
 
     @Transactional
