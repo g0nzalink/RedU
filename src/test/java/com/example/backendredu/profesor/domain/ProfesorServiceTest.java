@@ -19,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +42,17 @@ public class ProfesorServiceTest {
         modelMapper = new ModelMapper();
 
         profesorService = new ProfesorService(profesorRepository, modelMapper, usuarioRepository);
+
+        try {
+            Field encoderField = ProfesorService.class.getDeclaredField("encoder");
+            encoderField.setAccessible(true);
+            encoderField.set(profesorService, passwordEncoder);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error inyectando PasswordEncoder");
+        }
     }
+
 
     @Test
     void getProfesor_shouldReturnMappedProfesor_whenProfesorExist() {
@@ -119,13 +130,13 @@ public class ProfesorServiceTest {
 
         Mockito.when(usuarioRepository.existsById(email)).thenReturn(false);
         Mockito.when(usuarioRepository.existsByUsername(username)).thenReturn(false);
-
+        Mockito.when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
         profesorService.register(email, username, password, departamento);
 
         Mockito.verify(profesorRepository).save(Mockito.argThat(profesor ->
                 profesor.getEmail().equals(email) &&
                         profesor.getUsername().equals(username) &&
-                        profesor.getPassword().equals(password) &&
+                        "encodedPassword".equals(profesor.getPassword()) &&
                         profesor.getDepartamento() == departamento
         ));
     }
