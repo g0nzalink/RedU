@@ -1,6 +1,5 @@
 package com.example.backendredu.profesor.dto;
 
-import com.example.backendredu.alumno.domain.Carrera;
 import com.example.backendredu.profesor.domain.Departamento;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +23,6 @@ public class ProfesorRequestDto {
 
     private String description;
 
-    @NotBlank
+    @NotNull
     private Departamento departamento;
 }
