@@ -2,13 +2,6 @@ package com.example.backendredu.alumno.infrastructure;
 
 import com.example.backendredu.alumno.domain.Alumno;
 import com.example.backendredu.alumno.domain.Carrera;
-import com.example.backendredu.comentario.domain.Comentario;
-import com.example.backendredu.comentario.infrastructure.ComentarioRepository;
-import com.example.backendredu.publicacion.domain.Publicacion;
-import com.example.backendredu.publicacion.infrastructure.PublicacionRepository;
-import com.example.backendredu.usuario.domain.Role;
-import com.example.backendredu.usuario.domain.Usuario;
-import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +13,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
