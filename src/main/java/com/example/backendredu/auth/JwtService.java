@@ -15,10 +15,9 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
-    // ✅ Usa el email como "subject"
     public String generateToken(Usuario user) {
         return Jwts.builder()
-                .setSubject(user.getEmail()) // Aquí el cambio clave
+                .setSubject(user.getEmail())
                 .claim("role", user.getUserType().name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 día
@@ -26,18 +25,17 @@ public class JwtService {
                 .compact();
     }
 
-    // ✅ Esto ahora devuelve el email del usuario
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secret.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject(); // ← Este subject es el email
+                .getSubject();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token); // Este será el email
+        final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 

@@ -20,7 +20,6 @@ public class AuthController {
     @Autowired
     private UsuarioService userService;
 
-    //Opcion para registrar cualquier tipo de usuario, solo los admins pueden hacerlo
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest request) {

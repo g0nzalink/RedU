@@ -1,6 +1,5 @@
 package com.example.backendredu.pertenencia.domain;
 
-
 import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;

@@ -5,7 +5,6 @@ import com.example.backendredu.alumno.infrastructure.AlumnoRepository;
 import com.example.backendredu.exceptions.EmailAlreadyExistsException;
 import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
 import com.example.backendredu.usuario.domain.Role;
-import com.example.backendredu.usuario.domain.Usuario;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -14,8 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,24 +53,5 @@ public class AlumnoService {
 		alumnoRepository.save(alumno);
 	}
 
-
-	/*
-	public List<Publicacion> getAlumnoLikes (String correo) {
-		Alumno alumno = getAlumnoById(correo);
-		return alumno.getLikes();
-	}
-	
-	public List<Club> getAlumnoFollows (String correo) {
-		Alumno alumno = getAlumnoById(correo);
-		return alumno.getFollows();
-	}
-	
-	public Alumno updateAlumnoDescription(String correo, String newDesc) {
-		Alumno alumno = getAlumnoById(correo);
-		alumno.setDescription(newDesc);
-		return alumno;
-	}
-
-	 */
 }
 

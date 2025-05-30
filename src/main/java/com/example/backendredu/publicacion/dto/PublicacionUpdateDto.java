@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -13,8 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PublicacionUpdateDto {
 
-    private LocalDateTime fechaPublicacion;
-    private LocalDateTime fechaModificacion;
     private String titulo;
     private String descripcion;
     private List<Tag> listTag;

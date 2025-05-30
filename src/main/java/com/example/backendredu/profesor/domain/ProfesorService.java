@@ -6,7 +6,6 @@ import com.example.backendredu.profesor.dto.ProfesorResponseDto;
 import com.example.backendredu.profesor.infrastructure.ProfesorRepository;
 import com.example.backendredu.usuario.domain.Role;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

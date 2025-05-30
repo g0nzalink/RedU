@@ -1,14 +1,11 @@
 package com.example.backendredu.publicacion.domain;
 
-
 import com.example.backendredu.comentario.domain.Comentario;
 import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class Publicacion {
     @Column(name = "fechaPublicacion", nullable = false)
     private LocalDateTime fechaPublicacion;
     
-    @Column(name = "fechaModificacion", nullable = false)
+    @Column(name = "fechaModificacion")
     private LocalDateTime fechaModificacion;
     
     @Column(name = "titulo", nullable = false)
