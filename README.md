@@ -50,20 +50,20 @@
 ## 📘 Introducción
 
 ### Contexto
-Este proyecto se desarrolla en el ámbito de la educación superior, respondiendo a necesidades en la comunicación y compromiso estudiantil. La industria educativa enfrenta desafíos en la retención de miembros en clubes universitarios y en la efectividad de los canales de difusión tradicionales, como correos electrónicos, que suelen ser ignorados. Además, existe una demanda no cubierta de colaboración interdisciplinaria, donde proyectos personales o grupales—como aquellos de estudiantes de administración que requieren apoyo de otras carreras—no logran alcanzar a su audiencia potencial. Al implementar soluciones innovadoras de comunicación, el proyecto no solo beneficia a los estudiantes y clubes, sino que también sienta las bases para un modelo escalable que podría aplicarse en otras instituciones, potenciando así la colaboración y la construcción de relaciones académicas y profesionales entre estudiantes y profesores.
+Este proyecto se desarrolla en el ámbito de la educación superior, respondiendo a necesidades en la comunicación y compromiso estudiantil. La industria educativa enfrenta desafíos en la retención de miembros en clubes universitarios y en la efectividad de los canales de difusión tradicionales, como correos electrónicos, que suelen ser ignorados. Además, existe una demanda no cubierta de colaboración interdisciplinaria, donde proyectos personales o grupales como aquellos de estudiantes de administración que requieren apoyo de otras carreras pero no logran alcanzar a su audiencia potencial. Al implementar soluciones innovadoras de comunicación, este proyecto no solo beneficia a los estudiantes y clubes, sino que también sienta las bases para un modelo escalable que podría aplicarse en otras instituciones, potenciando así la colaboración y la construcción de relaciones académicas y profesionales entre estudiantes y profesores.
 
 ### Objetivo del Proyecto
-El objetivo principal de este proyecto a nivel provincial es mejorar la experiencia universitaria, enfocándonos especialmente en optimizar la comunicación de actividades, proyectos y oportunidades entre la universidad, los clubes estudiantiles y los alumnos. Actualmente, muchos estudiantes no reciben información oportuna sobre eventos o iniciativas, lo que lleva a la desintegración de clubes por falta de participación o al desconocimiento de proyectos relevantes. Para abordar este problema, nos centramos en objetivos específicos clave: mejorar la difusión de actividades tanto de clubes como de la universidad, fortalecer la comunicación institucional y promover la visibilidad de proyectos estudiantiles interdisciplinarios. De esta manera, buscamos crear un entorno más conectado y participativo, donde los estudiantes puedan aprovechar al máximo las oportunidades que ofrece la vida universitaria.
+El objetivo principal de **RedU** es mejorar la experiencia universitaria, enfocándonos especialmente en optimizar la comunicación de actividades, proyectos y oportunidades entre la universidad, los clubes estudiantiles y los alumnos. Actualmente, muchos estudiantes no reciben información oportuna sobre eventos o iniciativas, lo que lleva a la desintegración de clubes por falta de participación o al desconocimiento de proyectos relevantes. Para abordar este problema, nos centramos en objetivos específicos clave: mejorar la difusión de actividades tanto de clubes como de la universidad, fortalecer la comunicación institucional y promover la visibilidad de proyectos estudiantiles interdisciplinarios. De esta manera, buscamos crear un entorno más conectado y participativo, donde los estudiantes puedan aprovechar al máximo las oportunidades que ofrece la vida universitaria.
 
 ---
 
 ## 🧩 Identificación del Problema o Necesidad
 
 ### Descripción del Problema
-Los estudiantes universitarios no siempre son conscientes de las actividades que se realizan en su propia universidad. No son conscientes de la gran cantidad de organizaciones estudiantiles que hay en cada universidad y, por lo tanto, se pierden de grandes experiencias de potencial aprendizaje. A su vez, no todos en la universidad se encuentran comunicados y no se conocen todos entre si. Es por ello que, cuando alguien inicia un proyecto, no todas las personas que podrían estar interesadas en él saben de la existencia de dicho proyecto. En vistas generarles, el problema es la dificil difusión que hay para las oportunidades que existen en la universidad para crecer de manera académica o profesional, provocando que un estudiante nunca sepa de lo que se ha perdido.  
+Los estudiantes universitarios no siempre son conscientes de las actividades que se realizan en su propia universidad. No son conscientes de la gran cantidad de organizaciones estudiantiles que hay en cada universidad y, por lo tanto, se pierden de grandes experiencias de potencial aprendizaje. A su vez, no todos en la universidad se encuentran comunicados y no se conocen todos entre si. Es por ello que, cuando alguien inicia un proyecto, no todas las personas que podrían estar interesadas en él saben de la existencia de dicho proyecto. En vistas generales, el problema es la difícil difusión que hay para las oportunidades que existen en la universidad para crecer de manera académica o profesional, provocando que un estudiante nunca sepa de lo que se ha perdido.  
 
 ### Justificación
-Las organizacicones estudiantiles como tal presentan proyectos o actividades las cuales son sumamente interesantes para el público universitario. Es por ello que estas organizaciones y sus actividades merecen una mayor difusión para llegar a un público de manera más fácil y rápida. De esta manera, los estudiantes podrán tener a su disposición una gran cantidad de eventos en los cuales podrán desarrollar nuevas habilidades o hasta poder hacer networking con personas que comparten sus intereses. Por otro lado, los estudiantes o hasta los profesores podrán ser capaces de difundir proyectos o anuncios buscando grupos de estudios para fortalecer sus habilidades académicas o explorar nuevos objetivos. Es necesario que las ideas o hasta necesidades de los alumnos tengan una difusiuón rápida y accesible para que puedan desarrollar sus habilidades académicas al máximo. 
+Las organizaciones estudiantiles como tal presentan proyectos o actividades las cuales son sumamente interesantes para el público universitario. Es por ello que estas organizaciones y sus actividades merecen una mayor difusión para llegar a un público de manera más fácil y rápida. De esta manera, los estudiantes podrán tener a su disposición una gran cantidad de eventos en los cuales podrán desarrollar nuevas habilidades o hasta poder hacer networking con personas que comparten sus intereses. Por otro lado, los estudiantes o hasta los profesores podrán ser capaces de difundir proyectos o anuncios buscando grupos de estudios para fortalecer sus habilidades académicas o explorar nuevos objetivos. Es necesario que las ideas o hasta necesidades de los alumnos tengan una difusión rápida y accesible para que puedan desarrollar sus habilidades académicas al máximo. 
 
 ---
 
@@ -93,17 +93,14 @@ Las organizacicones estudiantiles como tal presentan proyectos o actividades las
 - Lenguaje(s): Java 21
 - Frameworks: Spring Boot
 - Base de datos: JPA, Postgres
-- API externas: ...
-- Otras herramientas: ...
+- Despliegue: Amazon Web Services
 
 ---
 
 ## 🗃 Modelo de Entidades
 
 ### Diagrama de Entidades
-![Diagrama ER o de clases](Entidad%20Relacion.png)
-
-### Descripción de Entidades
+![Diagrama ER o de clases](images/Entidad%20Relacion.png)
 
 ### Descripción de Entidades
 
@@ -164,15 +161,29 @@ Las organizacicones estudiantiles como tal presentan proyectos o actividades las
 ## 🌐 GitHub
 
 ### Uso de GitHub Projects
-- Organización por issues
+
+#### Organización por issues
+Creamos issues para cada refinamiento, arreglo de bugs, implementación, etc del código. 
+Esto para conseguir un correcto seguimiento del trabajo. En cada *issue* consideramos las siguientes buenas prácticas:
+- Creación de branches para cada issue
 - Asignación por miembros
-- Uso de etiquetas y deadlines
+- Uso de etiquetas
 
 ### Uso de GitHub Actions
-- Automatización de pruebas
-- Despliegue continuo (CI/CD)
-- Linting o validación de código
+Implementamos Github Actions para facilitar el deployment en nuestro proyecto. Para ello, agregamos el archivo 
+`````actions.yml````` dentro de `````.github/workflows````` y configuramos las variables de entorno requeridas de *AWS*
+en este proyecto.
 
+Con esto logramos:
+
+- Automatización de pruebas
+- Despliegue continuo
+- Linting o validación de código en cada PR hacia el main
+- Validación de código en cada push al main
+
+
+⚠️ Las variables AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY y AWS_SESSION_TOKEN cambian cada 4 horas, por lo que deben actualizarse.
+Esto es necesario para que GitHub Actions pueda subir imágenes a ECR y actualizar servicios en ECS al hacer push a main. Sin credenciales válidas, el despliegue automático también fallará.
 ---
 
 ## ✅ Conclusión
