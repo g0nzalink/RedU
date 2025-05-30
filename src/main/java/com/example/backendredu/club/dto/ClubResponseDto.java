@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClubResponseDto {
+
     private String email;
     private String nombre;
     private String descripcion;

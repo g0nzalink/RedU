@@ -3,7 +3,6 @@ package com.example.backendredu.publicacion.domain;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
-import com.example.backendredu.publicacion.exception.PublicacionNotFoundException;
 import com.example.backendredu.publicacion.infrastructure.PublicacionRepository;
 import com.example.backendredu.usuario.domain.Usuario;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.security.access.AccessDeniedException;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +35,7 @@ public class PublicacionService {
         Publicacion entidad = modelMapper.map(dto, Publicacion.class);
         entidad.setAutor(autor);
         entidad.setEsProyecto(false);
+        entidad.setFechaPublicacion(LocalDateTime.now());
 
         Publicacion saved = publicacionRepository.save(entidad);
         PublicacionResponseDto publicacionResponseDto = modelMapper.map(saved, PublicacionResponseDto.class);
@@ -67,10 +67,9 @@ public class PublicacionService {
             throw new AccessDeniedException("Solo el autor puede actualizar esta publicación");
         }
 
-        // Solo actualizamos lo que venga en el DTO
         if (dto.getTitulo() != null)             entidad.setTitulo(dto.getTitulo());
         if (dto.getDescripcion() != null)        entidad.setDescripcion(dto.getDescripcion());
-        if (dto.getFechaModificacion() != null)  entidad.setFechaModificacion(dto.getFechaModificacion());
+        entidad.setFechaModificacion(LocalDateTime.now());
         if (dto.getListTag() != null) {
             entidad.setListTag(dto.getListTag());
         }

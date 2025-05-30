@@ -1,6 +1,5 @@
 package com.example.backendredu.publicacion.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

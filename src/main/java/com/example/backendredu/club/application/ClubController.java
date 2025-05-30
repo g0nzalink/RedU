@@ -86,7 +86,7 @@ public class ClubController {
                 .body(p);
     }
 
-    @PreAuthorize("hasAnyRole('DIRECTIVA')")
+    @PreAuthorize("hasRole('DIRECTIVA')")
     @PostMapping("/{clubId}/miembro/{nuevoEmail}")
     public ResponseEntity<Pertenencia> newMiembro(
             @PathVariable String clubId,
@@ -111,7 +111,7 @@ public class ClubController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAnyRole('DIRECTIVA')")
+    @PreAuthorize("hasRole('DIRECTIVA')")
     @DeleteMapping("/{clubId}/miembro/{usuarioEmail}")
     public ResponseEntity<Void> eliminarMiembro(
             @PathVariable String clubId,

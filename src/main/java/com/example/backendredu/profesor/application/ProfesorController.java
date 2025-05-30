@@ -1,10 +1,5 @@
 package com.example.backendredu.profesor.application;
 
-import com.example.backendredu.alumno.domain.Alumno;
-import com.example.backendredu.alumno.email.AlumnoEmailEvent;
-import com.example.backendredu.alumno.email.AlumnoEventDto;
-import com.example.backendredu.auth.AuthRequest;
-import com.example.backendredu.profesor.domain.Profesor;
 import com.example.backendredu.profesor.domain.ProfesorService;
 import com.example.backendredu.profesor.dto.ProfesorRequestDto;
 import com.example.backendredu.profesor.dto.ProfesorResponseDto;

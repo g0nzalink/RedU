@@ -3,7 +3,6 @@ package com.example.backendredu.usuario.domain;
 import com.example.backendredu.auth.JwtService;
 import com.example.backendredu.exceptions.EmailAlreadyExistsException;
 import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
-import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,6 @@ public class UsuarioService implements UserDetailsService {
 		if (!encoder.matches(password, user.getPassword())) {
 			throw new BadCredentialsException("Contraseña incorrecta");
 		}
-		// ⚠️ Genera el token con el email (es tu ID en la entidad)
 		return jwtService.generateToken(user);
 	}
 
@@ -59,7 +57,7 @@ public class UsuarioService implements UserDetailsService {
 				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
 		return new org.springframework.security.core.userdetails.User(
-				user.getEmail(), // ahora el username será el email
+				user.getEmail(),
 				user.getPassword(),
 				List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name()))
 		);

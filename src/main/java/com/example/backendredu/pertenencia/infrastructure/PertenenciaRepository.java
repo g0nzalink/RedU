@@ -11,9 +11,6 @@ import java.util.Optional;
 
 public interface PertenenciaRepository extends JpaRepository<Pertenencia, Long> {
 
-	boolean existsByUsuarioIdAndClubId(Usuario usuario, Club club);
-	boolean existsByRelacion(Relacion relacion);
-
 	boolean existsByUsuarioIdAndClubIdAndRelacion(Usuario usuario, Club club, Relacion relacion);
 
 	Optional<Pertenencia> findByUsuarioIdEmailAndClubIdEmailAndRelacion(

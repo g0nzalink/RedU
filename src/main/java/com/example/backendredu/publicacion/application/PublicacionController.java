@@ -1,18 +1,14 @@
 package com.example.backendredu.publicacion.application;
 
-import com.example.backendredu.comentario.domain.Comentario;
 import com.example.backendredu.comentario.domain.ComentarioService;
 import com.example.backendredu.comentario.dto.ComentarioRequestDto;
 import com.example.backendredu.comentario.dto.ComentarioResponseDto;
-import com.example.backendredu.publicacion.domain.Publicacion;
 import com.example.backendredu.publicacion.domain.PublicacionService;
-import com.example.backendredu.publicacion.domain.Tag;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,23 +53,21 @@ public class PublicacionController {
             @PathVariable Long id,
             @Valid @RequestBody PublicacionUpdateDto publicacion,
             @AuthenticationPrincipal UserDetails userDetails) {
-        String emailLogeado = userDetails.getUsername();      // tu UserDetails debe usar el email como username
+        String emailLogeado = userDetails.getUsername();
         PublicacionResponseDto resp = publicacionService
                 .actualizarPublicacion(publicacion, id, emailLogeado);
         return ResponseEntity.ok(resp);
     }
 
-    //Hasta aca son endpoints similares a los de proyecto, pero enfocados en publicacion
-
-    //A partir de aca ya son los endpoints para hacer comentarios y tal
-
     @PatchMapping("/{publicacionId}/comentar")
-    public ResponseEntity<ComentarioResponseDto> comentarPublicacion(@RequestBody ComentarioRequestDto comentario, @PathVariable Long publicacionId){
-        ComentarioResponseDto creado = comentarioService.crearComentario(comentario, publicacionId);
+    public ResponseEntity<ComentarioResponseDto> comentarPublicacion(
+            @RequestBody ComentarioRequestDto comentario,
+            @PathVariable Long publicacionId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        ComentarioResponseDto creado = comentarioService.crearComentario(userDetails.getUsername(), comentario, publicacionId);
         return ResponseEntity.created(URI.create("http://localhost/publicacion/" + creado.getId())).body(creado);
     }
 
-    //Implementar metodo que obtenga la lista de los comentarios de la publicacion
     @GetMapping("/{publicacionId}/comentarios")
     public ResponseEntity<List<ComentarioResponseDto>> listarComentarios(@PathVariable Long publicacionId){
         return ResponseEntity.ok(comentarioService.listarComentarios(publicacionId));

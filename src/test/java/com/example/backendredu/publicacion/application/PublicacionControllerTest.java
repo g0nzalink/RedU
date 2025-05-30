@@ -2,6 +2,7 @@ package com.example.backendredu.publicacion.application;
 
 import com.example.backendredu.publicacion.application.PublicacionController;
 import com.example.backendredu.publicacion.domain.PublicacionService;
+import com.example.backendredu.publicacion.domain.Tag;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
@@ -63,11 +64,9 @@ public class PublicacionControllerTest {
         );
 
         requestDto = new PublicacionRequestDto(
-                LocalDateTime.now(),
-                LocalDateTime.now(),
                 "Nueva Publicacion",
                 "Nueva descripcion",
-                List.of("EDUCACION", "CIENCIA")
+                List.of(Tag.EDUCACION, Tag.DEBATE)
         );
     }
 
@@ -144,16 +143,18 @@ public class PublicacionControllerTest {
         verify(publicacionService).actualizarPublicacion(any(PublicacionUpdateDto.class), eq(1L), eq("admin@correo.com"));
     }
 
+    @WithMockUser(username = "alumno3@gmail.com", roles = "USER")
     @Test
     void comentarPublicacion_deberiaAgregarComentario() throws Exception {
         ComentarioRequestDto comentarioDto = new ComentarioRequestDto();
         comentarioDto.setContenido("Excelente publicacion!");
 
         ComentarioResponseDto responseDto = new ComentarioResponseDto();
+        responseDto.setAutor("alumno3@gmail.com");
         responseDto.setId(1L);
         responseDto.setContenido("Excelente publicacion!");
 
-        when(comentarioService.crearComentario(any(ComentarioRequestDto.class), eq(1L)))
+        when(comentarioService.crearComentario(eq("alumno3@gmail.com"), any(ComentarioRequestDto.class), eq(1L)))
                 .thenReturn(responseDto);
 
         mockMvc.perform(patch("/publicacion/{id}/comentar", 1L)
@@ -163,7 +164,7 @@ public class PublicacionControllerTest {
                 .andExpect(header().string("Location", "http://localhost/publicacion/1"))
                 .andExpect(jsonPath("$.contenido").value("Excelente publicacion!"));
 
-        verify(comentarioService).crearComentario(any(ComentarioRequestDto.class), eq(1L));
+        verify(comentarioService).crearComentario(eq("alumno3@gmail.com"),any(ComentarioRequestDto.class), eq(1L));
     }
 
     @Test

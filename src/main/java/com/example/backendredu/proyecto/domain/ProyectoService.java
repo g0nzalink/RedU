@@ -74,9 +74,6 @@ public class ProyectoService {
         if (newproyecto.getDescripcion() != null) {
             proyecto.setDescripcion(newproyecto.getDescripcion());
         }
-        if (newproyecto.getFechaModificacion() != null) {
-            proyecto.setFechaModificacion(newproyecto.getFechaModificacion());
-        }
         proyecto.setFechaModificacion(LocalDateTime.now());
 
         Proyecto updated = proyectoRepository.save(proyecto);

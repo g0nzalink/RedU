@@ -7,6 +7,7 @@ import com.example.backendredu.comentario.dto.ComentarioResponseDto;
 import com.example.backendredu.comentario.infrastructure.ComentarioRepository;
 import com.example.backendredu.publicacion.domain.Publicacion;
 import com.example.backendredu.publicacion.infrastructure.PublicacionRepository;
+import com.example.backendredu.usuario.domain.Usuario;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,23 +47,36 @@ class ComentarioServiceTest {
 				modelMapper
 		);
 	}
-	
+
 	@Test
 	void testCrearComentario() {
 		ComentarioRequestDto requestDto = new ComentarioRequestDto();
 		requestDto.setContenido("Comentario de prueba");
-		
+
 		Publicacion publicacion = new Publicacion();
 		publicacion.setId(1L);
 		publicacion.setListComentario(new ArrayList<>());
-		
+
+		Usuario usuarioMock = new Usuario();
+		usuarioMock.setUsername("tilin@gmail.com");
+
 		Comentario comentarioMock = new Comentario();
+		comentarioMock.setAutor("tilin@gmail.com");
 		comentarioMock.setContenido("Comentario de prueba");
 		comentarioMock.setFechaPublicacion(LocalDateTime.now());
-		
-		when(publicacionRepository.findById(1L)).thenReturn(Optional.of(publicacion));
-		when(modelMapper.map(requestDto, Comentario.class)).thenReturn(comentarioMock);
-		when(comentarioRepository.save(any(Comentario.class))).thenAnswer(inv -> inv.getArgument(0));
+
+		when(usuarioRepository.findByEmail("tilin@gmail.com"))
+				.thenReturn(Optional.of(usuarioMock));
+
+		when(publicacionRepository.findById(1L))
+				.thenReturn(Optional.of(publicacion));
+
+		when(modelMapper.map(requestDto, Comentario.class))
+				.thenReturn(comentarioMock);
+
+		when(comentarioRepository.save(any(Comentario.class)))
+				.thenAnswer(inv -> inv.getArgument(0));
+
 		when(modelMapper.map(any(Comentario.class), eq(ComentarioResponseDto.class)))
 				.thenAnswer(inv -> {
 					Comentario c = inv.getArgument(0);
@@ -70,8 +84,10 @@ class ComentarioServiceTest {
 					dto.setContenido(c.getContenido());
 					return dto;
 				});
-		
-		ComentarioResponseDto responseDto = comentarioService.crearComentario(requestDto, 1L);
+
+		ComentarioResponseDto responseDto =
+				comentarioService.crearComentario("tilin@gmail.com", requestDto, 1L);
+
 		assertEquals("Comentario de prueba", responseDto.getContenido());
 		assertEquals(1, publicacion.getListComentario().size());
 	}

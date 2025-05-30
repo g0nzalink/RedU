@@ -1,6 +1,5 @@
 package com.example.backendredu.proyecto.dto;
 
-
 import com.example.backendredu.proyecto.domain.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;

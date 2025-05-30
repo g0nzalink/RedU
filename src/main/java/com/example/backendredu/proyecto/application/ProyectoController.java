@@ -1,6 +1,5 @@
 package com.example.backendredu.proyecto.application;
 
-import com.example.backendredu.proyecto.domain.Proyecto;
 import com.example.backendredu.proyecto.domain.ProyectoService;
 import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
@@ -12,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -31,14 +29,12 @@ public class ProyectoController {
         return ResponseEntity.created(URI.create("http://localhost/proyecto/" + creado.getId())).body(creado);
     }
 
-    //Implementar que un usuario pueda obtener una lista de publicaciones
     @GetMapping
     public ResponseEntity<List<ProyectoResponseDto>> listarProyectos() {
         List<ProyectoResponseDto> proyectos = proyectoService.allProyectos();
         return ResponseEntity.ok(proyectos);
     }
 
-    //Implementar que un usuario pueda obtener una publicacion en especifico
     @GetMapping("/{proyectoId}")
     public ResponseEntity<ProyectoResponseDto> obtenerProyecto(@PathVariable Long proyectoId) {
         return ResponseEntity.ok(proyectoService.obtenerProyecto(proyectoId));

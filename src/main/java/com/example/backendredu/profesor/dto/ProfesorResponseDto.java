@@ -1,6 +1,5 @@
 package com.example.backendredu.profesor.dto;
 
-import com.example.backendredu.alumno.domain.Carrera;
 import com.example.backendredu.profesor.domain.Departamento;
 import com.example.backendredu.usuario.domain.Role;
 import lombok.AllArgsConstructor;

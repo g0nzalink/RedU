@@ -58,7 +58,7 @@ class ProyectoRepositoryTest {
         proyecto.setEsProyecto(true);
         proyecto.setFechaPublicacion(LocalDateTime.now());
         proyecto.setFechaModificacion(LocalDateTime.now());
-        proyecto.setListTag(List.of(Tag.CODING));
+        proyecto.setListTag(List.of(Tag.PROFESIONAL));
 
         Proyecto guardado = proyectoRepository.save(proyecto);
 

@@ -1,6 +1,5 @@
 package com.example.backendredu.profesor.domain;
 
-
 import com.example.backendredu.usuario.domain.Role;
 import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;

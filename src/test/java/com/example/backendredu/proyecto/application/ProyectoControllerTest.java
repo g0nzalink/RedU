@@ -6,6 +6,7 @@ import com.example.backendredu.proyecto.domain.Status;
 import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
 import com.example.backendredu.auth.JwtService;
+import com.example.backendredu.publicacion.domain.Tag;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,12 +57,10 @@ public class ProyectoControllerTest {
         proyectoDto.setListTag(List.of("INTELIGENCIA_ARTIFICIAL", "PROGRAMACION"));
 
         requestDto = new ProyectoRequestDto();
-        requestDto.setFechaPublicacion(LocalDateTime.now());
-        requestDto.setFechaModificacion(LocalDateTime.now());
         requestDto.setTitulo("Nuevo Proyecto");
         requestDto.setDescripcion("Descripción del nuevo proyecto");
         requestDto.setStatus(Status.ACTIVO);
-        requestDto.setListTag(List.of("DESARROLLO_WEB", "BASE_DE_DATOS"));
+        requestDto.setListTag(List.of(Tag.CLUB, Tag.CAPACITACION));
     }
 
     @Test
@@ -141,11 +140,10 @@ public class ProyectoControllerTest {
     @WithMockUser(username = "estudiante@correo.com", roles = {"ALUMNO"})
     void actualizarProyecto_deberiaActualizarCampos() throws Exception {
         ProyectoRequestDto updateDto = new ProyectoRequestDto();
-        updateDto.setFechaPublicacion(LocalDateTime.now());
         updateDto.setTitulo("Proyecto Actualizado");
         updateDto.setDescripcion("Descripción actualizada del proyecto");
         updateDto.setStatus(Status.ACTIVO);
-        updateDto.setListTag(List.of("CODING"));
+        updateDto.setListTag(List.of(Tag.ARTE));
 
         ProyectoResponseDto updatedDto = new ProyectoResponseDto();
         updatedDto.setId(1L);
