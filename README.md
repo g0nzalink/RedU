@@ -119,20 +119,43 @@ Las organizaciones estudiantiles como tal presentan proyectos o actividades las 
 
 ## 🧪 Testing y Manejo de Errores
 
-### Niveles de Testing Realizados
-- Pruebas unitarias
-- Pruebas de integración
-- Pruebas de sistema
-- Pruebas de aceptación
+Este proyecto aplica pruebas en múltiples niveles para asegurar la calidad y robustez del sistema. A continuación, se detalla la estrategia por módulo:
 
-### Resultados
-- Total de pruebas realizadas
-- Errores encontrados y cómo se resolvieron
+### Publicaciones
 
-### Manejo de Errores
-- Uso de controladores de excepciones globales
-- Exceptions por cada clase (ClubNotFoundException, por ejemplo), junto descripciones informativas del error.
----
+- **Controller:** Se usa `@WebMvcTest` con `MockMvc` y `@WithMockUser` para simular usuarios. Se prueban endpoints REST, validaciones, errores y seguridad.
+- **Service:** Probado con Mockito (`@ExtendWith(MockitoExtension)`). Se cubre lógica CRUD, validaciones de negocio y manejo de excepciones.
+- **Repository:** Se utiliza `@DataJpaTest` con TestContainers y PostgreSQL para validar consultas JPA y relaciones entre entidades.
+
+### Proyectos
+
+- **Controller:** Igual que Publicaciones, incluyendo pruebas de filtros, búsqueda, paginación y control de permisos por rol.
+- **Service:** Se testea con Mockito cubriendo permisos, duplicados, validaciones y estados inconsistentes.
+- **Repository:** Se prueban consultas personalizadas y validaciones de integridad referencial con PostgreSQL real.
+
+### Comentarios
+
+- **Service:** Pruebas con Mockito manual. Se testean permisos, comentarios anidados, moderación automática y eliminación en cascada.
+- **Repository:** Con `@DataJpaTest` y TestContainers. Se validan jerarquías, filtrado, búsqueda por fechas y operaciones de agregación.
+
+### Clubs
+
+- **Controller:** `@WebMvcTest` con pruebas de unirse, abandonar y gestionar membresías. Se validan roles y accesos.
+- **Service:** Mockito manual. Se testean reglas de negocio como tipos de club, límites de miembros y moderación.
+- **Repository:** `@DataJpaTest` con PostgreSQL para verificar operaciones básicas, búsquedas por tipo y relaciones con usuarios.
+
+### Alumnos
+
+- **Controller:** `@WebMvcTest` y `@AutoConfigureMockMvc(addFilters = false)` para desactivar filtros de seguridad. Se prueban registros, búsquedas y conflictos.
+- **Service:** Mockito manual con `ModelMapper` real. Se cubre el registro completo, validaciones únicas y codificación de contraseña.
+- **DTO:** Se testea con `LocalValidatorFactoryBean`, verificando constraints en campos obligatorios y opcionales.
+- **Repository:** `@DataJpaTest` con TestContainers y PostgreSQL. Se validan enums (`Carrera`), persistencia y consultas básicas.
+
+### Profesores
+
+- **Controller:** Igual que Alumnos. Se prueban endpoints de consulta y registro, incluyendo validaciones.
+- **Service:** Mockito manual y reflexión para inyección. Se testea el registro y obtención de profesores con lógica específica.
+- **Repository:** `@DataJpaTest` con PostgreSQL. Se prueban operaciones CRUD, relaciones con `Departamento` y estructura de datos.
 
 ## 🔒 Medidas de Seguridad Implementadas
 
@@ -179,7 +202,7 @@ Con esto logramos:
 - Validación de código en cada push al main
 
 
-⚠️ Las variables AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY y AWS_SESSION_TOKEN cambian cada 4 horas, por lo que deben actualizarse.
+Las variables AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY y AWS_SESSION_TOKEN cambian cada 4 horas, por lo que deben actualizarse.
 Esto es necesario para que GitHub Actions pueda subir imágenes a ECR y actualizar servicios en ECS al hacer push a main. Sin credenciales válidas, el despliegue automático también fallará.
 ---
 
