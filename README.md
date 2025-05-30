@@ -131,9 +131,7 @@ Las organizaciones estudiantiles como tal presentan proyectos o actividades las 
 
 ### Manejo de Errores
 - Uso de controladores de excepciones globales
-- Ejemplo de excepción: `ResourceNotFoundException`
-- Justificación de su uso
-
+- Exceptions por cada clase (ClubNotFoundException, por ejemplo), junto descripciones informativas del error.
 ---
 
 ## 🔒 Medidas de Seguridad Implementadas
@@ -152,9 +150,8 @@ Las organizaciones estudiantiles como tal presentan proyectos o actividades las 
 
 ## 🔄 Eventos y Asincronía
 
-- Eventos implementados: ...
-- Uso de listeners asincrónicos con `@Async`
-- Justificación de asincronía (mejorar rendimiento, desacoplar lógica)
+- Se envían correos al momento del registro de un usuario (alumnos y profesores) para verificar que el correo es el correcto.
+- Uso de publishers y listeners asincrónicos con `@Async`.
 
 ---
 
@@ -189,16 +186,18 @@ Esto es necesario para que GitHub Actions pueda subir imágenes a ECR y actualiz
 ## ✅ Conclusión
 
 ### Logros del Proyecto
-Breve resumen de lo que se logró.
+Se realizó el mínimo producto viable de la red social RedU fabricada exclusivamente para compartir los eventos y las novedades de los clubes de UTEC. Se implementó un sistema de entidades eficiente, un manejo de seguridad con roles apropiado (administrador, directiva, alumno, etc.), eventos asíncronos gracias al envío de correos al registrarse, testing extensivo con Mockito y Testcontainers, y manejo de errores con un Global Handler.
 
 ### Aprendizajes Clave
-- Lección 1
-- Lección 2
+- Uso de las herramientas de Spring Boot para backend.
+- Manejo de seguridad y roles en la aplicación.
+- Uso de DTOs, responses y requests.
+- Manejo de errores en el testing y en la aplicación misma.
+- Cooperación y comunicación eficiente cuando más de una persona se dedicaba a hacer la misma parte.
+- Organización, planificación y trabajo en equipo.
 
 ### Trabajo Futuro
-- Posibles mejoras
-- Nuevas funcionalidades
-
+- Más funcionalidades: mostrar apoyo en las publicaciones, tags ilimitados (con filtro), inclusión de publicaciones de la UTEC misma, ...
 ---
 
 ## 📎 Apéndices
@@ -209,4 +208,3 @@ Este proyecto está licenciado bajo la [MIT License](LICENSE).
 ### Referencias
 - Documentación oficial de Spring Boot
 - Tutoriales y artículos utilizados
-- Otros recursos relevantes
