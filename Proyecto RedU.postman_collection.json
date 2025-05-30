@@ -1,0 +1,714 @@
+{
+	"info": {
+		"_postman_id": "1aed9d07-dd5a-4593-8b79-fd45a1a2954f",
+		"name": "Proyecto RedU",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43481541",
+		"_collection_link": "https://gonzalo-1974214.postman.co/workspace/Gonzalo's-Workspace~0a5ab4e2-6fa3-4bad-8b8f-bcdde9614046/collection/43481541-1aed9d07-dd5a-4593-8b79-fd45a1a2954f?action=share&source=collection_link&creator=43481541"
+	},
+	"item": [
+		{
+			"name": "Testing de \"Publicacion\"",
+			"item": [
+				{
+					"name": "Crear una publicacion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"titulo\": \"Mi primera publicación\",\r\n  \"descripcion\": \"Esta es una prueba\",\r\n  \"listTag\": [\"CLUB\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/publicacion",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"publicacion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener todas las publicaciones",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"autor\": \"profesor.gomez\",\r\n  \"fechaPublicacion\": \"2025-05-27T18:00:00\",\r\n  \"fechaModificacion\": \"2025-05-27T18:00:00\",\r\n  \"titulo\": \"Anuncio Importante\",\r\n  \"descripcion\": \"Se reprograma la fecha de examen final\",\r\n  \"listTag\": [\"GRUPO_ESTUDIO\"]\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/publicacion",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"publicacion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener publicacion por id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"titulo\": \"Proyecto con DTOs (Actualizado)\",\r\n  \"descripcion\": \"Ahora verificamos el patch\",\r\n  \"fechaModificacion\": \"2025-05-28T09:00:00\",\r\n  \"status\": \"INACTIVO\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/publicacion/{{publicacionId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"publicacion",
+								"{{publicacionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar publicacion",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"titulo\": \"Anuncio Actualizado\",\r\n  \"descripcion\": \"La fecha de examen es el 10 de junio\",\r\n  \"listTag\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/publicacion/actualizar/{{publicacionId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"publicacion",
+								"actualizar",
+								"{{publicacionId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Comentar en una publicacion",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"contenido\": \"hola mundo\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/publicacion/{{publicacionId}}/comentar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"publicacion",
+								"{{publicacionId}}",
+								"comentar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener comentarios de una publicacion",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/publicacion/{{publicacionId}}/comentarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"publicacion",
+								"{{publicacionId}}",
+								"comentarios"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing de \"Proyecto\"",
+			"item": [
+				{
+					"name": "Testing entidad proyecto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"titulo\": \"Proyecto dormir 2\",\r\n  \"descripcion\": \"Tenemos que descansar de descansar\",\r\n  \"listTag\": [\"CLUB\"],\r\n  \"capacidad\": 3\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/proyecto",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"proyecto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener proyectos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/proyecto",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"proyecto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener proyecto por id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/proyecto/{{proyectoId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"proyecto",
+								"{{proyectoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar proyecto",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"titulo\": \"Proyecto con DTOs (Actualizado)\",\r\n  \"descripcion\": \"Ahora verificamos el patch\",\r\n  \"status\": \"INACTIVO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/proyecto/actualizar/{{proyectoId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"proyecto",
+								"actualizar",
+								"{{proyectoId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing de \"Auth\"",
+			"item": [
+				{
+					"name": "register Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"CMA@gmail.com\",  \r\n  \"username\": \"alumnox2\",\r\n  \"password\": \"tilin123\",\r\n  \"role\": \"ALUMNO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const data = pm.response.json()\r",
+									"pm.collectionVariables.set(\"jwtToken\", data.token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"alumno@gmail.com\",  \r\n  \"password\": \"alumno123\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener todos los usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/usuario",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"usuario"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing de \"Club\"",
+			"item": [
+				{
+					"name": "Obtener todos los clubs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener club por id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{email}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{email}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Seguir club",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{clubId}}/seguir",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{clubId}}",
+								"seguir"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dejar de seguir club",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{clubId}}/dejarSeguir",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{clubId}}",
+								"dejarSeguir"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ver seguidores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{email}}/seguidores",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{email}}",
+								"seguidores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Designar Directiva",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{clubId}}/designarDirectiva/{{usuarioEmail}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{clubId}}",
+								"designarDirectiva",
+								"{{usuarioEmail}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Designar Miembro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{clubId}}/miembro/{{nuevoEmail}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{clubId}}",
+								"miembro",
+								"{{nuevoEmail}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar a miembro de directiva",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{clubId}}/directiva/{{usuarioEmail}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{clubId}}",
+								"directiva",
+								"{{usuarioEmail}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar a miembro de club",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/club/{{clubId}}/directiva/{{usuarioEmail}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"club",
+								"{{clubId}}",
+								"directiva",
+								"{{usuarioEmail}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing de \"Alumno\"",
+			"item": [
+				{
+					"name": "Registrar alumno",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"alumno@gmail.com\",  \r\n  \"username\": \"alumno\",\r\n  \"password\": \"alumno123\",\r\n  \"carrera\": \"CIENCIA_DE_LA_COMPUTACION\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/alumno/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"alumno",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener alumno por Id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Testing de \"Profesor\"",
+			"item": [
+				{
+					"name": "Registrar profesor",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"profesor@gmail.com\",  \r\n  \"username\": \"profesor\",\r\n  \"password\": \"profesor123\",\r\n  \"departamento\": \"CIENCIAS\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/profesor/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"profesor",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener profesor por Id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwtToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "jwtToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
