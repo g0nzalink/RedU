@@ -101,7 +101,7 @@ Las organizacicones estudiantiles como tal presentan proyectos o actividades las
 ## 🗃 Modelo de Entidades
 
 ### Diagrama de Entidades
-![Diagrama ER o de clases](ruta/al/diagrama.png)
+![Diagrama ER o de clases](Entidad%20Relacion.png)
 
 ### Descripción de Entidades
 
