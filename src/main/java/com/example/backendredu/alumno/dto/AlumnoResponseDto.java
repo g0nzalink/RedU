@@ -14,6 +14,7 @@ public class AlumnoResponseDto {
     private String email;
     private String username;
     private String description;
+    private String fotoPerfilUrl;
     private Role userType;
     private Carrera carrera;
 

@@ -23,6 +23,8 @@ public class ProfesorRequestDto {
 
     private String description;
 
+    private String fotoDePerfil;
+
     @NotNull
     private Departamento departamento;
 }

@@ -1,9 +1,13 @@
 package com.example.backendredu.usuario.domain;
 
+import com.example.backendredu.Like.domain.Like;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
@@ -26,6 +30,12 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type", nullable = false)
     private Role userType;
+
+    @Column
+    private String fotoPerfilUrl;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 }
 
 

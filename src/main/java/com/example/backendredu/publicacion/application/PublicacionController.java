@@ -7,6 +7,7 @@ import com.example.backendredu.publicacion.domain.PublicacionService;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
+import com.example.backendredu.usuario.dto.UsuarioResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -73,5 +74,18 @@ public class PublicacionController {
         return ResponseEntity.ok(comentarioService.listarComentarios(publicacionId));
     }
 
+    //darle like a una publicacion
+    @PatchMapping("/{publicacionId}/like")
+    public ResponseEntity<PublicacionResponseDto> likePublicacion(@PathVariable Long publicacionId,
+                                                                  @AuthenticationPrincipal UserDetails userDetails){
+        PublicacionResponseDto resp = publicacionService.newLike(publicacionId, userDetails.getUsername());
+        return ResponseEntity.created(URI.create("http://localhost/publicacion/" + resp.getId())).body(resp);
+    }
+
+    //ver usuarios que le dieron like a una publicacion
+    @GetMapping("/{publicacionId}/seeLikes")
+    public ResponseEntity<List<UsuarioResponseDto>> verLikes(@PathVariable Long publicacionId){
+        return ResponseEntity.ok(publicacionService.getUserLikes(publicacionId));
+    }
 }
 

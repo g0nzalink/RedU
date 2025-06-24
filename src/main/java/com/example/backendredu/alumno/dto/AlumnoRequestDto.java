@@ -23,6 +23,8 @@ public class AlumnoRequestDto {
 
     private String description;
 
+    private String fotoPerfilUrl;
+
     @NotNull
     private Carrera carrera;
 

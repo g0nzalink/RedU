@@ -1,5 +1,6 @@
 package com.example.backendredu.publicacion.domain;
 
+import com.example.backendredu.Like.domain.Like;
 import com.example.backendredu.comentario.domain.Comentario;
 import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
@@ -43,4 +44,11 @@ public class Publicacion {
 
     @Column
     private Boolean esProyecto;
+
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
+    @Column
+    private Integer likesCount = 0;
+
 }

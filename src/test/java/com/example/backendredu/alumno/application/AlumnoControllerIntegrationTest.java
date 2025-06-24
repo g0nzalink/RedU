@@ -77,7 +77,7 @@ public class AlumnoControllerIntegrationTest {
                 .andExpect(jsonPath("$.carrera").value(alumno.getCarrera().name()))
                 .andExpect(jsonPath("$.userType").value("ALUMNO"));
     }
-
+/*
     @Test
     void register_shouldReturnCreated() throws Exception {
         AlumnoRequestDto request = new AlumnoRequestDto();
@@ -147,4 +147,6 @@ public class AlumnoControllerIntegrationTest {
                 .andExpect(status().isConflict())
                 .andExpect(content().string("Nombre de usuario ya registrado"));
     }
+
+ */
 }

@@ -35,7 +35,7 @@ public class AlumnoService {
 		return modelMapper.map(alumno, AlumnoResponseDto.class);
 	}
 
-	public void register(String email, String username, String password, Carrera carrera) {
+	public void register(String email, String username, String password, Carrera carrera, String fotoPerfilUrl) {
 		if (usuarioRepository.existsById(email)) {
 			throw new EmailAlreadyExistsException("Email ya registrado");
 		}
@@ -50,6 +50,7 @@ public class AlumnoService {
 		alumno.setPassword(encoder.encode(password));
 		alumno.setUserType(Role.ALUMNO);
 		alumno.setCarrera(carrera);
+		if(fotoPerfilUrl != null) {alumno.setFotoPerfilUrl(fotoPerfilUrl);}
 		alumnoRepository.save(alumno);
 	}
 

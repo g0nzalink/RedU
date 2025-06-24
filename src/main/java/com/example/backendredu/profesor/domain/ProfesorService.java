@@ -31,7 +31,7 @@ public class ProfesorService {
         return modelMapper.map(profesor, ProfesorResponseDto.class);
     }
 
-    public void register(String email, String username, String password, Departamento departamento) {
+    public void register(String email, String username, String password, Departamento departamento, String fotoDePerfil) {
         if (usuarioRepository.existsById(email)) {
             throw new EmailAlreadyExistsException("Email ya registrado");
         }
@@ -46,6 +46,7 @@ public class ProfesorService {
         profesor.setPassword(encoder.encode(password));
         profesor.setUserType(Role.PROFESOR);
         profesor.setDepartamento(departamento);
+        if(fotoDePerfil != null) {profesor.setFotoPerfilUrl(fotoDePerfil);}
         profesorRepository.save(profesor);
     }
 }
