@@ -1,6 +1,8 @@
 package com.example.backendredu.pertenencia.domain;
 
 import com.example.backendredu.club.domain.Club;
+import com.example.backendredu.club.dto.ClubResponseDto;
+import com.example.backendredu.club.dto.ClubResumenDto;
 import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
 import com.example.backendredu.usuario.domain.Role;
@@ -8,10 +10,12 @@ import com.example.backendredu.usuario.domain.Usuario;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,7 +25,8 @@ public class PertenenciaService {
     private final PertenenciaRepository pertenenciaRepository;
     private final UsuarioRepository usuarioRepository;
     private final ClubRepository clubRepository;
-
+    private final ModelMapper modelMapper;
+    
     public Pertenencia crearPertenencia(String usuarioEmail, String clubEmail) {
         Usuario usuario = usuarioRepository.findById(usuarioEmail)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
@@ -65,6 +70,18 @@ public class PertenenciaService {
 
         return pertenencias.stream()
                 .map(Pertenencia::getUsuarioId)
+                .toList();
+    }
+    
+    public List<Club> obtenerClubesSeguidos(String usuarioEmail) {
+        Usuario usuario = usuarioRepository.findById(usuarioEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        
+        List<Pertenencia> pertenencias = pertenenciaRepository
+                .findByUsuarioIdAndRelacion(usuario, Relacion.SEGUIDOR);
+        
+        return pertenencias.stream()
+                .map(Pertenencia::getClubId)
                 .toList();
     }
 
@@ -135,5 +152,28 @@ public class PertenenciaService {
                 .orElseThrow(() -> new EntityNotFoundException("No se encontró la relación MIEMBRO"));
 
         pertenenciaRepository.delete(pertenencia);
+    }
+    
+    public boolean esDirectivaDeAlgunClub(String usuarioEmail) {
+        List<Pertenencia> pertenencias = pertenenciaRepository.findAllByUsuarioIdEmailAndRelacion(usuarioEmail, Relacion.DIRECTIVA);
+        System.out.println("Pertenencias encontradas para " + usuarioEmail + ": " + pertenencias.size());
+        return !pertenencias.isEmpty();
+    }
+    
+    public List<ClubResumenDto> getClubNombresComoDirectiva(String usuarioEmail) {
+        List<Pertenencia> pertenencias = pertenenciaRepository.findAllByUsuarioIdEmailAndRelacion(usuarioEmail, Relacion.DIRECTIVA);
+        List<ClubResumenDto> clubes = new ArrayList<>();
+        for (Pertenencia pertenencia : pertenencias) {
+            Club club = pertenencia.getClubId();
+            clubes.add(new ClubResumenDto(club.getEmail(), club.getNombre()));
+        }
+        return clubes;
+    }
+    
+    public List<ClubResumenDto> getClubesComoDirectiva(String usuarioEmail) {
+        List<Pertenencia> pertenencias = pertenenciaRepository.findAllByUsuarioIdEmailAndRelacion(usuarioEmail, Relacion.DIRECTIVA);
+        List<ClubResumenDto> clubes = new ArrayList<>();
+        for (Pertenencia pertenencia : pertenencias) { clubes.add(modelMapper.map(pertenencia.getClubId(), ClubResumenDto.class)); }
+        return clubes;
     }
 }

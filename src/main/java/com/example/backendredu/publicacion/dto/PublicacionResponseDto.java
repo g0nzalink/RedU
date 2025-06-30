@@ -14,11 +14,16 @@ public class PublicacionResponseDto {
 
     private Long id;
     private String autorUsername;
+    private String creador;
     private LocalDateTime fechaPublicacion;
     private LocalDateTime fechaModificacion;
     private String titulo;
     private String descripcion;
+    private String club;
     private List<String> listTag;
     private Boolean esProyecto;
-
+    private String clubName;
+    private String clubLogoUrl;
+    private Integer likesCount;
+    private boolean likedByCurrentUser;
 }

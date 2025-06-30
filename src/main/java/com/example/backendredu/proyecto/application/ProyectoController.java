@@ -19,12 +19,12 @@ import java.util.List;
 public class ProyectoController {
 
     private final ProyectoService proyectoService;
-
-    @PreAuthorize("hasAnyRole('ALUMNO', 'PROFESOR')")
+    
     @PostMapping
     public ResponseEntity<ProyectoResponseDto> crearProyecto(
             @RequestBody ProyectoRequestDto proyectoDto,
             @AuthenticationPrincipal UserDetails userDetails){
+        System.out.println("📩 Recibida creación de proyecto de: " + userDetails.getUsername());
         ProyectoResponseDto creado = proyectoService.crearProyecto(proyectoDto, userDetails.getUsername());
         return ResponseEntity.created(URI.create("http://localhost/proyecto/" + creado.getId())).body(creado);
     }

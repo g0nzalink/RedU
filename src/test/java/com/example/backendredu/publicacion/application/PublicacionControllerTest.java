@@ -60,7 +60,7 @@ public class PublicacionControllerTest {
                 "Test Publicacion",
                 "Descripcion de prueba",
                 List.of("CODING", "EDUCACION"),
-                false
+                false,
         );
 
         requestDto = new PublicacionRequestDto(

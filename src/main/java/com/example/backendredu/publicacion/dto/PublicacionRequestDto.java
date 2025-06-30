@@ -21,4 +21,7 @@ public class PublicacionRequestDto {
 
     @NotEmpty
     private List<Tag> listTag;
+    
+    @NotBlank
+    private String club;
 }

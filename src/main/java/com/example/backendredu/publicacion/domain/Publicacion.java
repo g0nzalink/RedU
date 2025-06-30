@@ -1,6 +1,7 @@
 package com.example.backendredu.publicacion.domain;
 
 import com.example.backendredu.Like.domain.Like;
+import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.comentario.domain.Comentario;
 import com.example.backendredu.usuario.domain.Usuario;
 import jakarta.persistence.*;
@@ -50,5 +51,10 @@ public class Publicacion {
 
     @Column
     private Integer likesCount = 0;
+    
+    //agregado por walde
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_email", referencedColumnName = "email", nullable = false)
+    private Club club;
 
 }

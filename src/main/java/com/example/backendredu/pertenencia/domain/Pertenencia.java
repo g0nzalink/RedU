@@ -29,6 +29,5 @@ public class Pertenencia {
     @Enumerated(EnumType.STRING)
     @Column(name = "relacion", nullable = false)
     private Relacion relacion;
-
 }
 

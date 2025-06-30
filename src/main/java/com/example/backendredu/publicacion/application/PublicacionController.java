@@ -40,8 +40,8 @@ public class PublicacionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PublicacionResponseDto>> listarPublicaciones() {
-        return ResponseEntity.ok(publicacionService.allPublicaciones());
+    public ResponseEntity<List<PublicacionResponseDto>> listarPublicaciones(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(publicacionService.allPublicaciones(userDetails.getUsername()));
     }
 
     @GetMapping("/{idPublicacion}")
@@ -79,13 +79,20 @@ public class PublicacionController {
     public ResponseEntity<PublicacionResponseDto> likePublicacion(@PathVariable Long publicacionId,
                                                                   @AuthenticationPrincipal UserDetails userDetails){
         PublicacionResponseDto resp = publicacionService.newLike(publicacionId, userDetails.getUsername());
-        return ResponseEntity.created(URI.create("http://localhost/publicacion/" + resp.getId())).body(resp);
+        return ResponseEntity.ok(resp);
     }
 
     //ver usuarios que le dieron like a una publicacion
     @GetMapping("/{publicacionId}/seeLikes")
     public ResponseEntity<List<UsuarioResponseDto>> verLikes(@PathVariable Long publicacionId){
         return ResponseEntity.ok(publicacionService.getUserLikes(publicacionId));
+    }
+    
+    @GetMapping("/{publicacionId}/likedByMe")
+    public ResponseEntity<Boolean> likedByCurrentUser(@PathVariable Long publicacionId,
+                                                      @AuthenticationPrincipal UserDetails userDetails) {
+        boolean liked = publicacionService.wasLikedByUser(publicacionId, userDetails.getUsername());
+        return ResponseEntity.ok(liked);
     }
 }
 

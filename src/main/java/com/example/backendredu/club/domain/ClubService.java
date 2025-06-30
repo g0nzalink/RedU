@@ -20,9 +20,6 @@ public class ClubService {
 
     private final ModelMapper modelMapper;
 
-    private final PertenenciaRepository perteneceRepository;
-    private final UsuarioRepository usuarioRepository;
-
     public ClubResponseDto getClub(String email){
         Club club = clubRepository.findById(email).orElseThrow(() -> new EntityNotFoundException("No existe un club con el correo " + email));
         return modelMapper.map(club, ClubResponseDto.class);

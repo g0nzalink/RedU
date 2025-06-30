@@ -1,5 +1,7 @@
 package com.example.backendredu.proyecto.domain;
 
+import com.example.backendredu.club.domain.Club;
+import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
 import com.example.backendredu.proyecto.infrastructure.ProyectoRepository;
@@ -26,6 +28,8 @@ public class ProyectoService {
     private final UsuarioRepository usuarioRepository;
 
     private final ModelMapper modelMapper;
+    
+    private final ClubRepository clubRepository;
 
     @Transactional
     public ProyectoResponseDto crearProyecto(ProyectoRequestDto proyectoDto, String emailUsuario){
@@ -35,10 +39,15 @@ public class ProyectoService {
         Proyecto proyecto = modelMapper.map(proyectoDto, Proyecto.class);
 
         proyecto.setAutor(autor);
-
+        proyecto.setFechaPublicacion(LocalDateTime.now());
+        Club adminClub = clubRepository.findByNombre("ADMINCLUB")
+                .orElseThrow(() -> new IllegalStateException("No se encontró el club ADMINCLUB"));
+        proyecto.setClub(adminClub);
+        
         Proyecto saved = proyectoRepository.save(proyecto);
         ProyectoResponseDto proyectoResponseDto = modelMapper.map(saved, ProyectoResponseDto.class);
         proyectoResponseDto.setAutor(autor.getUsername());
+        
         return proyectoResponseDto;
     }
 

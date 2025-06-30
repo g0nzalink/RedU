@@ -16,4 +16,7 @@ public class Club {
 
     @Column(name = "descripcion")
     private String descripcion;
+    
+    @Column(name = "foto_url")
+    private String fotoUrl;
 }
