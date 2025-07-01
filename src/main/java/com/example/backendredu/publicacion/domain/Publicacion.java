@@ -53,8 +53,9 @@ public class Publicacion {
     private Integer likesCount = 0;
     
     //agregado por walde
+    //Cambio por gonzalink: para que proyecto funcione correctamente esto puede ser null
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_email", referencedColumnName = "email", nullable = false)
+    @JoinColumn(name = "club_email", referencedColumnName = "email", nullable = true)
     private Club club;
 
 }
