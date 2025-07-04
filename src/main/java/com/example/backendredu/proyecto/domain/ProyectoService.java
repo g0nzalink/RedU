@@ -41,7 +41,7 @@ public class ProyectoService {
         dto.setAutorUsername(proyecto.getAutor().getUsername());
         dto.setCreador(proyecto.getAutor().getEmail());
         dto.setListTag(proyecto.getListTag().stream().map(Enum::name).toList());
-        dto.setClub(proyecto.getClub().getEmail());
+        dto.setClubEmail(proyecto.getClub().getEmail());
         dto.setClubName(proyecto.getClub().getNombre());
         dto.setClubLogoUrl(proyecto.getClub().getFotoUrl());
         dto.setEsProyecto(true);

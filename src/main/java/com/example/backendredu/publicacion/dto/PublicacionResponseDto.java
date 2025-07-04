@@ -19,7 +19,7 @@ public class PublicacionResponseDto {
     private LocalDateTime fechaModificacion;
     private String titulo;
     private String descripcion;
-    private String club;
+    private String clubEmail;
     private List<String> listTag;
     private Boolean esProyecto;
     private String clubName;

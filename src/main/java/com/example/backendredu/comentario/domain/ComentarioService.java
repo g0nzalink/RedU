@@ -38,7 +38,7 @@ public class ComentarioService {
         Comentario comentario = modelMapper.map(newcomentario, Comentario.class);
         comentario.setPublicacion(pub);
         comentario.setFechaPublicacion(LocalDateTime.now());
-        comentario.setAutor(user.getUsername());
+        comentario.setAutor(user.getEmail());
 
         Comentario saved = comentarioRepository.save(comentario);
 

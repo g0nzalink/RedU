@@ -79,13 +79,28 @@ public class PublicacionService {
         
         return publicacionResponseDto;
     }
-
-
-    @Transactional
+    
+    
     public PublicacionResponseDto getPublicacionById(Long id) {
-        Publicacion p = publicacionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada con id: " + id));
-        return modelMapper.map(p, PublicacionResponseDto.class);
+        Publicacion p = publicacionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada con id: " + id));
+        
+        PublicacionResponseDto dto = modelMapper.map(p, PublicacionResponseDto.class);
+        
+        if (p.getAutor() != null) {
+            dto.setAutorUsername(p.getAutor().getUsername());
+            dto.setCreador(p.getAutor().getEmail());
+        }
+        
+        if (p.getClub() != null) {
+            dto.setClubName(p.getClub().getNombre());
+            dto.setClubLogoUrl(p.getClub().getFotoUrl());
+        }
+        
+        dto.setLikesCount(p.getLikes().size());
+        dto.setLikedByCurrentUser(false);
+        dto.setClubEmail(p.getClub().getEmail());
+        
+        return dto;
     }
     
     @Transactional
