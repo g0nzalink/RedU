@@ -30,7 +30,29 @@ public class ProyectoService {
     private final ModelMapper modelMapper;
     
     private final ClubRepository clubRepository;
-
+    
+    private ProyectoResponseDto convertirAProyectoDto(Proyecto proyecto) {
+        ProyectoResponseDto dto = new ProyectoResponseDto();
+        dto.setId(proyecto.getId());
+        dto.setTitulo(proyecto.getTitulo());
+        dto.setDescripcion(proyecto.getDescripcion());
+        dto.setFechaPublicacion(proyecto.getFechaPublicacion());
+        dto.setFechaModificacion(proyecto.getFechaModificacion());
+        dto.setAutorUsername(proyecto.getAutor().getUsername());
+        dto.setCreador(proyecto.getAutor().getEmail());
+        dto.setListTag(proyecto.getListTag().stream().map(Enum::name).toList());
+        dto.setClub(proyecto.getClub().getEmail());
+        dto.setClubName(proyecto.getClub().getNombre());
+        dto.setClubLogoUrl(proyecto.getClub().getFotoUrl());
+        dto.setEsProyecto(true);
+        dto.setLikesCount(proyecto.getLikes().size());
+        dto.setLikedByCurrentUser(false);
+        dto.setCapacidad(proyecto.getCapacidad());
+        dto.setStatus(proyecto.getStatus());
+        return dto;
+    }
+    
+    
     @Transactional
     public ProyectoResponseDto crearProyecto(ProyectoRequestDto proyectoDto, String emailUsuario){
         Usuario autor = usuarioRepository.findById(emailUsuario)
@@ -45,16 +67,13 @@ public class ProyectoService {
         proyecto.setClub(adminClub);
         
         Proyecto saved = proyectoRepository.save(proyecto);
-        ProyectoResponseDto proyectoResponseDto = modelMapper.map(saved, ProyectoResponseDto.class);
-        proyectoResponseDto.setAutor(autor.getUsername());
-        
-        return proyectoResponseDto;
+        return convertirAProyectoDto(saved);
     }
 
     @Transactional
     public List<ProyectoResponseDto> allProyectos() {
         return proyectoRepository.findAll().stream()
-                .map(p -> modelMapper.map(p, ProyectoResponseDto.class))
+                .map(this::convertirAProyectoDto)
                 .collect(Collectors.toList());
     }
 

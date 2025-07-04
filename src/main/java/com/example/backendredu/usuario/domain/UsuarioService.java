@@ -35,7 +35,7 @@ public class UsuarioService implements UserDetailsService {
 		}
 
 		if (userRepository.existsByUsername(username)) {
-			throw new UsernameAlreadyExistsException("Nombre usuario ya registrado");
+			throw new UsernameAlreadyExistsException("Nombre de usuario ya registrado.");
 		}
 		Usuario user = new Usuario();
 		user.setEmail(email);
@@ -47,9 +47,9 @@ public class UsuarioService implements UserDetailsService {
 
 	public String login(String email, String password) {
 		Usuario user = userRepository.findByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+				.orElseThrow(() -> new UsernameNotFoundException("Nombre de usuario no encontrado."));
 		if (!encoder.matches(password, user.getPassword())) {
-			throw new BadCredentialsException("Contraseña incorrecta");
+			throw new BadCredentialsException("Contraseña incorrecta.");
 		}
 		return jwtService.generateToken(user);
 	}
@@ -57,7 +57,7 @@ public class UsuarioService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Usuario user = userRepository.findById(email)
-				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+				.orElseThrow(() -> new UsernameNotFoundException("Nombre de usuario no encontrado."));
 
 		return new org.springframework.security.core.userdetails.User(
 				user.getEmail(),

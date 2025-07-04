@@ -106,7 +106,7 @@ public class ClubController {
                 .body(p);
     }
 
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
     @DeleteMapping("/{clubId}/directiva/{usuarioEmail}")
     public ResponseEntity<Void> eliminarDirectiva(
             @PathVariable String clubId,
@@ -116,7 +116,7 @@ public class ClubController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('DIRECTIVA')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
     @DeleteMapping("/{clubId}/miembro/{usuarioEmail}")
     public ResponseEntity<Void> eliminarMiembro(
             @PathVariable String clubId,

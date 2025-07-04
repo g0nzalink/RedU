@@ -27,17 +27,17 @@ public class ProfesorService {
 
     public ProfesorResponseDto getProfesorById (String correo) {
         Profesor profesor = profesorRepository.findById(correo)
-                .orElseThrow(() -> new EntityNotFoundException("No existe un profesor con el correo " + correo));
+                .orElseThrow(() -> new EntityNotFoundException("No existe un profesor con el correo " + correo + "."));
         return modelMapper.map(profesor, ProfesorResponseDto.class);
     }
 
     public void register(String email, String username, String password, Departamento departamento, String fotoDePerfil) {
         if (usuarioRepository.existsById(email)) {
-            throw new EmailAlreadyExistsException("Email ya registrado");
+            throw new EmailAlreadyExistsException("Email ya registrado anteriormente.");
         }
 
         if (usuarioRepository.existsByUsername(username)) {
-            throw new UsernameAlreadyExistsException("Nombre de usuario ya registrado");
+            throw new UsernameAlreadyExistsException("Nombre de usuario ya registrado.");
         }
 
         Profesor profesor = new Profesor();

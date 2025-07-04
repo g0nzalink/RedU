@@ -11,8 +11,11 @@ import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -175,5 +178,17 @@ public class PertenenciaService {
         List<ClubResumenDto> clubes = new ArrayList<>();
         for (Pertenencia pertenencia : pertenencias) { clubes.add(modelMapper.map(pertenencia.getClubId(), ClubResumenDto.class)); }
         return clubes;
+    }
+    
+    public Boolean esDirectivaDeClub(String clubEmail, String usuarioEmail) {
+        Club club = clubRepository.findById(clubEmail).orElseThrow(() -> new EntityNotFoundException("Club no encontrado"));
+        Usuario usuario = usuarioRepository.findById(usuarioEmail).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+		return pertenenciaRepository.existsByUsuarioIdAndClubIdAndRelacion(usuario, club, Relacion.DIRECTIVA);
+    }
+    
+    public Boolean esMiembroDeClub(String clubEmail, String usuarioEmail) {
+        Club club = clubRepository.findById(clubEmail).orElseThrow(() -> new EntityNotFoundException("Club no encontrado"));
+        Usuario usuario = usuarioRepository.findById(usuarioEmail).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        return pertenenciaRepository.existsByUsuarioIdAndClubIdAndRelacion(usuario, club, Relacion.MIEMBRO);
     }
 }

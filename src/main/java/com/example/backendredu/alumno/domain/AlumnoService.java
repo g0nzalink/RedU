@@ -30,18 +30,17 @@ public class AlumnoService {
 	@Transactional
 	public AlumnoResponseDto getAlumnoById(String email) {
 		Alumno alumno = alumnoRepository.findById(email)
-				.orElseThrow(() -> new EntityNotFoundException(
-						"No existe un alumno con el correo " + email));
+				.orElseThrow(() -> new EntityNotFoundException("No existe un alumno con el correo " + email + "."));
 		return modelMapper.map(alumno, AlumnoResponseDto.class);
 	}
 
 	public void register(String email, String username, String password, Carrera carrera, String fotoPerfilUrl) {
 		if (usuarioRepository.existsById(email)) {
-			throw new EmailAlreadyExistsException("Email ya registrado");
+			throw new EmailAlreadyExistsException("Email ya registrado.");
 		}
 
 		if (usuarioRepository.existsByUsername(username)) {
-			throw new UsernameAlreadyExistsException("Nombre de usuario ya registrado");
+			throw new UsernameAlreadyExistsException("Nombre de usuario ya registrado.");
 		}
 
 		Alumno alumno = new Alumno();
