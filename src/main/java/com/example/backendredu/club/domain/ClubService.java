@@ -1,6 +1,8 @@
 package com.example.backendredu.club.domain;
 
+import com.example.backendredu.club.dto.ClubCreateDto;
 import com.example.backendredu.club.dto.ClubResponseDto;
+import com.example.backendredu.club.exceptions.ClubAlreadyExistsException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
@@ -29,6 +31,16 @@ public class ClubService {
     public List<Club> allClubs() {
         return clubRepository.findAll().stream()
                 .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public ClubResponseDto crearClub(ClubCreateDto clubCreateDto) {
+        Club newClub = modelMapper.map(clubCreateDto, Club.class);
+        if (clubRepository.existsById(clubCreateDto.getEmail())) {
+            throw new ClubAlreadyExistsException("Este club ya existe.");
+        }
+        clubRepository.save(newClub);
+        return modelMapper.map(newClub, ClubResponseDto.class);
     }
 }
 

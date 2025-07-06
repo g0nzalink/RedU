@@ -2,6 +2,7 @@ package com.example.backendredu;
 
 
 import com.example.backendredu.alumno.exceptions.AlumnoNotFoundException;
+import com.example.backendredu.club.exceptions.ClubAlreadyExistsException;
 import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.exceptions.EmailAlreadyExistsException;
 import com.example.backendredu.exceptions.UsernameAlreadyExistsException;
@@ -52,9 +53,14 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
 	}
 
-	@ExceptionHandler(EntityNotFoundException.class)
+	@ExceptionHandler(ClubAlreadyExistsException.class)
 	public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+	}
+	
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<String> handleClubAlreadyExists(ClubAlreadyExistsException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)

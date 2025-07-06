@@ -1,8 +1,12 @@
 package com.example.backendredu.club.application;
 
+import com.example.backendredu.cloudinary.CloudinaryService;
 import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.club.domain.ClubService;
+import com.example.backendredu.club.dto.ClubCreateDto;
 import com.example.backendredu.club.dto.ClubResponseDto;
+import com.example.backendredu.club.exceptions.ClubNotFoundException;
+import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.pertenencia.domain.Pertenencia;
 import com.example.backendredu.pertenencia.domain.PertenenciaService;
 import com.example.backendredu.usuario.domain.FileStorageService;
@@ -29,12 +33,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClubController {
     private final ClubService clubService;
+    
+    private final CloudinaryService cloudinaryService;
 
     private final PertenenciaService pertenenciaService;
 
     private final ModelMapper modelMapper;
     
-    private final FileStorageService fileStorageService;
+    private final ClubRepository clubRepository;
 
     @GetMapping("/{email}")
     public ResponseEntity<ClubResponseDto> getClub(@PathVariable String email) {
@@ -139,35 +145,56 @@ public class ClubController {
         return ResponseEntity.ok(dtos);
     }
     
-    @PostMapping("/logo/{email}")
-    public ResponseEntity<String> uploadClubLogo(
-            @PathVariable String email,
-            @RequestParam("file") MultipartFile file) {
-        try {
-            fileStorageService.storeClubLogo(email, file);
-            return ResponseEntity.ok("Logo del club subido correctamente");
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Error al subir logo: " + e.getMessage());
-        }
-    }
-    
-    
-    @GetMapping("/logo/{email}")
-    public ResponseEntity<Resource> getClubProfilePhoto(@PathVariable String email) throws IOException {
-        Resource image = fileStorageService.loadClubProfilePhoto(email);
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(image);
-    }
-    
     @GetMapping("/vista")
     public ResponseEntity<List<ClubResponseDto>> listarClubsDTO() {
         List<ClubResponseDto> dtos = clubService.allClubs().stream()
                 .map(club -> modelMapper.map(club, ClubResponseDto.class))
                 .toList();
         return ResponseEntity.ok(dtos);
+    }
+    
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
+    @PostMapping("/logo/{clubEmail}")
+    public ResponseEntity<String> uploadClubLogo(
+            @PathVariable String clubEmail,
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            System.out.println("📩 Recibida imagen para: " + clubEmail);
+            System.out.println("🧑 Usuario autenticado: " + userDetails.getUsername());
+            
+            // Verificar roles manualmente
+            boolean esAdmin = userDetails.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMINISTRADOR"));
+            boolean esDirectiva = pertenenciaService.esDirectivaDeClub(clubEmail, userDetails.getUsername());
+            
+            if (!esAdmin && !esDirectiva) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("No tienes permisos para modificar el logo de este club.");
+            }
+            
+            // Buscar el club
+            Club club = clubRepository.findById(clubEmail)
+                    .orElseThrow(() -> new ClubNotFoundException("Club no encontrado."));
+            System.out.println("✅ Club encontrado: " + club.getNombre());
+            
+            // Subir imagen real
+            String url = cloudinaryService.uploadImage(file, "clubs", clubEmail);
+            club.setFotoUrl(url);
+            clubRepository.save(club);
+            
+            return ResponseEntity.ok(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+    
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PostMapping
+    public ResponseEntity<ClubResponseDto> crearClub(@RequestBody ClubCreateDto clubCreateDto) {
+        ClubResponseDto club = clubService.crearClub(clubCreateDto);
+        return ResponseEntity.created(URI.create("/club/" + club.getEmail())).body(club);
     }
 }
 
