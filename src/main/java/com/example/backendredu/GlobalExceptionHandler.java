@@ -41,8 +41,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
 	}
-
-	// Excepciones de registro :0
+	
 	@ExceptionHandler(EmailAlreadyExistsException.class)
 	public ResponseEntity<String> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());

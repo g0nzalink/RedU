@@ -33,7 +33,7 @@ public class Publicacion {
     @Column(name = "titulo", nullable = false)
     private String titulo;
     
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
     @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -52,10 +52,10 @@ public class Publicacion {
     @Column
     private Integer likesCount = 0;
     
-    //agregado por walde
-    //Cambio por gonzalink: para que proyecto funcione correctamente esto puede ser null
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_email", referencedColumnName = "email", nullable = true)
+    @JoinColumn(name = "club_email", referencedColumnName = "email")
     private Club club;
 
+    @Column(name = "fotoUrl")
+    private String fotoUrl;
 }

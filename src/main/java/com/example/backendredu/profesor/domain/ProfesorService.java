@@ -46,7 +46,7 @@ public class ProfesorService {
         profesor.setPassword(encoder.encode(password));
         profesor.setUserType(Role.PROFESOR);
         profesor.setDepartamento(departamento);
-        if(fotoDePerfil != null) {profesor.setFotoPerfilUrl(fotoDePerfil);}
+        profesor.setFotoPerfilUrl("https://res.cloudinary.com/dvrldorwz/image/upload/v1751791862/redu_padding_imbmse.png");
         profesorRepository.save(profesor);
     }
 }

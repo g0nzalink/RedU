@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/alumno/**").permitAll()
                         .requestMatchers("/profesor/**").permitAll()
+                        .requestMatchers("/usuario").permitAll()
                         .requestMatchers(HttpMethod.GET, "/club/logo/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/esdirectiva").authenticated()

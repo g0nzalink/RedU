@@ -2,11 +2,10 @@ package com.example.backendredu.publicacion.domain;
 
 import com.example.backendredu.Like.domain.Like;
 import com.example.backendredu.Like.infrastructure.LikeRepository;
+import com.example.backendredu.cloudinary.CloudinaryService;
 import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
-import com.example.backendredu.comentario.dto.ComentarioResponseDto;
-import com.example.backendredu.pertenencia.domain.Pertenencia;
 import com.example.backendredu.pertenencia.domain.Relacion;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
@@ -25,10 +24,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,9 +43,10 @@ public class PublicacionService {
     private final ModelMapper modelMapper;
     private final PertenenciaRepository pertenenciaRepository;
     private final ClubRepository clubRepository;
+    private final CloudinaryService cloudinaryService;
     
     @Transactional
-    public PublicacionResponseDto createPublicacion(PublicacionRequestDto dto, String emailUsuario) {
+    public PublicacionResponseDto createPublicacion(PublicacionRequestDto dto, String emailUsuario, MultipartFile imagen) {
         Usuario autor = usuarioRepository.findById(emailUsuario)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + emailUsuario));
         
@@ -51,6 +54,15 @@ public class PublicacionService {
         entidad.setAutor(autor);
         entidad.setEsProyecto(false);
         entidad.setFechaPublicacion(LocalDateTime.now());
+        
+        if (imagen != null && !imagen.isEmpty()) {
+            try {
+                String url = cloudinaryService.uploadImage(imagen, "publicaciones", "pub_" + UUID.randomUUID());
+                entidad.setFotoUrl(url);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al subir imagen", e);
+            }
+        }
         
         Club club = clubRepository.findById(dto.getClub())
                 .orElseThrow(() -> new ClubNotFoundException("No se encontró al club con ID: " + dto.getClub()));
@@ -60,24 +72,25 @@ public class PublicacionService {
                     .findAllByUsuarioIdEmailAndRelacion(emailUsuario, Relacion.DIRECTIVA).stream()
                     .anyMatch(p -> p.getClubId().getEmail().equals(dto.getClub()));
             
-            if (!pertenece) { throw new AccessDeniedException("El usuario no pertenece a la directiva del club especificado"); }
+            if (!pertenece) {
+                throw new AccessDeniedException("El usuario no pertenece a la directiva del club especificado");
+            }
+            
             entidad.setClub(club);
+        } else if (autor.getUserType().equals(Role.ADMINISTRADOR)) {
+            entidad.setClub(club);
+        } else {
+            throw new IllegalStateException("Solo DIRECTIVA o ADMINISTRADOR pueden publicar.");
         }
-        
-        else if (autor.getUserType().equals(Role.ADMINISTRADOR)) { entidad.setClub(club); }
-        else { throw new IllegalStateException("Solo DIRECTIVA o ADMINISTRADOR pueden publicar."); }
         
         Publicacion saved = publicacionRepository.save(entidad);
-        PublicacionResponseDto publicacionResponseDto = modelMapper.map(saved, PublicacionResponseDto.class);
+        PublicacionResponseDto dtoResp = modelMapper.map(saved, PublicacionResponseDto.class);
         
-        if (saved.getAutor() != null) {
-            publicacionResponseDto.setAutorUsername(saved.getAutor().getUsername());
-            publicacionResponseDto.setClubLogoUrl(saved.getClub().getFotoUrl());
-            publicacionResponseDto.setCreador(saved.getAutor().getEmail());
-            
-        }
+        dtoResp.setAutorUsername(autor.getUsername());
+        dtoResp.setCreador(autor.getEmail());
+        dtoResp.setClubLogoUrl(club.getFotoUrl());
         
-        return publicacionResponseDto;
+        return dtoResp;
     }
     
     
@@ -94,11 +107,15 @@ public class PublicacionService {
         if (p.getClub() != null) {
             dto.setClubName(p.getClub().getNombre());
             dto.setClubLogoUrl(p.getClub().getFotoUrl());
+            dto.setClubEmail(p.getClub().getEmail());
+        } else {
+            dto.setClubName("ADMINCLUB");
+            dto.setClubEmail(null);
         }
         
         dto.setLikesCount(p.getLikes().size());
         dto.setLikedByCurrentUser(false);
-        dto.setClubEmail(p.getClub().getEmail());
+        dto.setFotoUrl(p.getFotoUrl());
         
         return dto;
     }
@@ -117,6 +134,7 @@ public class PublicacionService {
                     if (p.getClub() != null) {
                         dto.setClubName(p.getClub().getNombre());
                         dto.setClubLogoUrl(p.getClub().getFotoUrl());
+                        dto.setClubEmail(p.getClub().getEmail());
                     }
                     
                     dto.setLikesCount(p.getLikes().size());
@@ -140,15 +158,29 @@ public class PublicacionService {
             throw new AccessDeniedException("Solo el autor puede actualizar esta publicación");
         }
 
-        if (dto.getTitulo() != null)             entidad.setTitulo(dto.getTitulo());
-        if (dto.getDescripcion() != null)        entidad.setDescripcion(dto.getDescripcion());
+        if (dto.getTitulo() != null) { entidad.setTitulo(dto.getTitulo()); }
+        if (dto.getDescripcion() != null) { entidad.setDescripcion(dto.getDescripcion()); }
         entidad.setFechaModificacion(LocalDateTime.now());
-        if (dto.getListTag() != null) {
-            entidad.setListTag(dto.getListTag());
-        }
+        if (dto.getListTag() != null) { entidad.setListTag(dto.getListTag()); }
 
         Publicacion updated = publicacionRepository.save(entidad);
-        return modelMapper.map(updated, PublicacionResponseDto.class);
+        PublicacionResponseDto responseDto = modelMapper.map(updated, PublicacionResponseDto.class);
+        
+        responseDto.setAutorUsername(updated.getAutor().getUsername());
+        responseDto.setCreador(updated.getAutor().getEmail());
+        
+        if (updated.getClub() != null) {
+            responseDto.setClubName(updated.getClub().getNombre());
+            responseDto.setClubLogoUrl(updated.getClub().getFotoUrl());
+            responseDto.setClubEmail(updated.getClub().getEmail());
+        }
+        
+        responseDto.setLikesCount(updated.getLikes().size());
+        responseDto.setLikedByCurrentUser(
+                updated.getLikes().stream().anyMatch(l -> l.getUsuario().getEmail().equals(emailLogeado))
+        );
+        
+        return responseDto;
     }
     
     @Transactional
@@ -194,6 +226,21 @@ public class PublicacionService {
     
     public boolean wasLikedByUser(Long publicacionId, String email) {
         return likeRepository.existsByPublicacionIdAndUsuarioEmail(publicacionId, email);
+    }
+    
+    public String subirImagen(Long id, String emailUsuario, MultipartFile file) throws IOException {
+        Publicacion publicacion = publicacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada"));
+        
+        if (!publicacion.getAutor().getEmail().equals(emailUsuario)) {
+            throw new AccessDeniedException("No tienes permiso para subir imagen a esta publicación");
+        }
+        
+        String url = cloudinaryService.uploadImage(file, "publicaciones", id.toString());
+        
+        publicacion.setFotoUrl(url);
+        publicacionRepository.save(publicacion);
+        return url;
     }
 }
 

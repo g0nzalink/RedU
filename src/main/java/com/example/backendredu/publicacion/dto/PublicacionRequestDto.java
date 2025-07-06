@@ -24,4 +24,6 @@ public class PublicacionRequestDto {
     
     @NotBlank
     private String club;
+    
+    private String fotoUrl;
 }

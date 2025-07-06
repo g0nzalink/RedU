@@ -1,5 +1,6 @@
 package com.example.backendredu.publicacion.application;
 
+import aj.org.objectweb.asm.TypeReference;
 import com.example.backendredu.comentario.domain.ComentarioService;
 import com.example.backendredu.comentario.dto.ComentarioRequestDto;
 import com.example.backendredu.comentario.dto.ComentarioResponseDto;
@@ -8,14 +9,18 @@ import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
 import com.example.backendredu.usuario.dto.UsuarioResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -27,13 +32,15 @@ public class PublicacionController {
     private final PublicacionService publicacionService;
 
     private final ComentarioService comentarioService;
-
+    
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PublicacionResponseDto> crearPublicacion(
-            @RequestBody PublicacionRequestDto publicacion,
+            @RequestPart("data") PublicacionRequestDto publicacion,
+            @RequestPart(value = "imagen", required = false) MultipartFile imagen,
             @AuthenticationPrincipal UserDetails userDetails) {
-        PublicacionResponseDto created = publicacionService.createPublicacion(publicacion, userDetails.getUsername());
+        
+        PublicacionResponseDto created = publicacionService.createPublicacion(publicacion, userDetails.getUsername(), imagen);
         return ResponseEntity
                 .created(URI.create("http://localhost/publicacion/" + created.getId()))
                 .body(created);
@@ -93,6 +100,16 @@ public class PublicacionController {
                                                       @AuthenticationPrincipal UserDetails userDetails) {
         boolean liked = publicacionService.wasLikedByUser(publicacionId, userDetails.getUsername());
         return ResponseEntity.ok(liked);
+    }
+    
+    @PostMapping("/{idPublicacion}/upload")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
+    public ResponseEntity<String> uploadPostPhoto(
+            @PathVariable Long idPublicacion,
+            @RequestParam MultipartFile imagen,
+            @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        String url = publicacionService.subirImagen(idPublicacion, userDetails.getUsername(), imagen);
+        return ResponseEntity.ok(url);
     }
 }
 

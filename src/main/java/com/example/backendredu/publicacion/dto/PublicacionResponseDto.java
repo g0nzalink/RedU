@@ -26,4 +26,5 @@ public class PublicacionResponseDto {
     private String clubLogoUrl;
     private Integer likesCount;
     private boolean likedByCurrentUser;
+    private String fotoUrl;
 }

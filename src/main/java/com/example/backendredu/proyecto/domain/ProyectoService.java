@@ -1,5 +1,6 @@
 package com.example.backendredu.proyecto.domain;
 
+import com.example.backendredu.cloudinary.CloudinaryService;
 import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
@@ -14,9 +15,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +34,7 @@ public class ProyectoService {
     private final ModelMapper modelMapper;
     
     private final ClubRepository clubRepository;
+    private final CloudinaryService cloudinaryService;
     
     private ProyectoResponseDto convertirAProyectoDto(Proyecto proyecto) {
         ProyectoResponseDto dto = new ProyectoResponseDto();
@@ -52,24 +57,36 @@ public class ProyectoService {
         return dto;
     }
     
-    
     @Transactional
-    public ProyectoResponseDto crearProyecto(ProyectoRequestDto proyectoDto, String emailUsuario){
-        Usuario autor = usuarioRepository.findById(emailUsuario)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + emailUsuario));
-
-        Proyecto proyecto = modelMapper.map(proyectoDto, Proyecto.class);
-
-        proyecto.setAutor(autor);
-        proyecto.setFechaPublicacion(LocalDateTime.now());
-        Club adminClub = clubRepository.findByNombre("ADMINCLUB")
-                .orElseThrow(() -> new IllegalStateException("No se encontró el club ADMINCLUB"));
-        proyecto.setClub(adminClub);
+    public ProyectoResponseDto crearProyecto(ProyectoRequestDto dto, String email, MultipartFile imagen) {
+        Usuario autor = usuarioRepository.findById(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
         
-        Proyecto saved = proyectoRepository.save(proyecto);
-        return convertirAProyectoDto(saved);
+        Proyecto entidad = modelMapper.map(dto, Proyecto.class);
+        entidad.setAutor(autor);
+        entidad.setEsProyecto(true);
+        entidad.setFechaPublicacion(LocalDateTime.now());
+        entidad.setStatus(dto.getStatus());
+        
+        if (imagen != null && !imagen.isEmpty()) {
+            try {
+                String url = cloudinaryService.uploadImage(imagen, "proyectos", "proy_" + UUID.randomUUID());
+                entidad.setFotoUrl(url);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al subir imagen", e);
+            }
+        }
+        
+        Proyecto saved = proyectoRepository.save(entidad);
+        ProyectoResponseDto responseDto = modelMapper.map(saved, ProyectoResponseDto.class);
+        
+        responseDto.setAutorUsername(autor.getUsername());
+        responseDto.setCreador(autor.getEmail());
+        
+        return responseDto;
     }
-
+    
+    
     @Transactional
     public List<ProyectoResponseDto> allProyectos() {
         return proyectoRepository.findAll().stream()
@@ -80,7 +97,7 @@ public class ProyectoService {
     public ProyectoResponseDto obtenerProyecto(Long id) {
         Proyecto p = proyectoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("No existe"));
-        return modelMapper.map(p, ProyectoResponseDto.class);
+        return convertirAProyectoDto(p);
     }
 
     @Transactional
@@ -105,6 +122,6 @@ public class ProyectoService {
         proyecto.setFechaModificacion(LocalDateTime.now());
 
         Proyecto updated = proyectoRepository.save(proyecto);
-        return modelMapper.map(updated, ProyectoResponseDto.class);
+        return convertirAProyectoDto(updated);
     }
 }

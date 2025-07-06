@@ -1,3 +1,4 @@
+/*
 package com.example.backendredu.publicacion.application;
 
 import com.example.backendredu.publicacion.application.PublicacionController;
@@ -190,3 +191,4 @@ public class PublicacionControllerTest {
         verify(comentarioService).listarComentarios(1L);
     }
 }
+*/

@@ -2,8 +2,12 @@ package com.example.backendredu.usuario.application;
 
 import com.example.backendredu.cloudinary.CloudinaryService;
 import com.example.backendredu.usuario.domain.Usuario;
+import com.example.backendredu.usuario.domain.UsuarioService;
+import com.example.backendredu.usuario.dto.UsuarioResponseDto;
+import com.example.backendredu.usuario.dto.UsuarioUpdateDto;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/usuario")
@@ -22,6 +27,8 @@ public class UsuarioController {
     
     private final CloudinaryService cloudinaryService;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
+    private final ModelMapper modelMapper;
     
     @PostMapping("/{email}/profile-photo")
     @PreAuthorize("hasAnyRole('ALUMNO', 'PROFESOR', 'DIRECTIVA', 'ADMINISTRADOR')")
@@ -41,5 +48,20 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al subir imagen de perfil: " + e.getMessage());
         }
+    }
+    
+    @PatchMapping("/{email}/update")
+    public ResponseEntity<UsuarioResponseDto> actualizarUsuario(
+            @PathVariable String email,
+            @RequestBody UsuarioUpdateDto dto
+    ) {
+        Usuario actualizado = usuarioService.updateUsuario(email, dto);
+        UsuarioResponseDto response = modelMapper.map(actualizado, UsuarioResponseDto.class);
+        return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping
+    public List<UsuarioResponseDto> getAllUsers() {
+        return usuarioService.getAll();
     }
 }

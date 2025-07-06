@@ -49,7 +49,7 @@ public class AlumnoService {
 		alumno.setPassword(encoder.encode(password));
 		alumno.setUserType(Role.ALUMNO);
 		alumno.setCarrera(carrera);
-		if(fotoPerfilUrl != null) {alumno.setFotoPerfilUrl(fotoPerfilUrl);}
+		alumno.setFotoPerfilUrl("https://res.cloudinary.com/dvrldorwz/image/upload/v1751791862/redu_padding_imbmse.png");
 		alumnoRepository.save(alumno);
 	}
 
