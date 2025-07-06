@@ -35,7 +35,7 @@ public class ProyectoService {
     
     private final ClubRepository clubRepository;
     private final CloudinaryService cloudinaryService;
-    
+
     private ProyectoResponseDto convertirAProyectoDto(Proyecto proyecto) {
         ProyectoResponseDto dto = new ProyectoResponseDto();
         dto.setId(proyecto.getId());
@@ -46,17 +46,28 @@ public class ProyectoService {
         dto.setAutorUsername(proyecto.getAutor().getUsername());
         dto.setCreador(proyecto.getAutor().getEmail());
         dto.setListTag(proyecto.getListTag().stream().map(Enum::name).toList());
-        dto.setClubEmail(proyecto.getClub().getEmail());
-        dto.setClubName(proyecto.getClub().getNombre());
-        dto.setClubLogoUrl(proyecto.getClub().getFotoUrl());
+
+        // ✅ Protección contra club nulo
+        if (proyecto.getClub() != null) {
+            dto.setClubEmail(proyecto.getClub().getEmail());
+            dto.setClubName(proyecto.getClub().getNombre());
+            dto.setClubLogoUrl(proyecto.getClub().getFotoUrl());
+        } else {
+            dto.setClubEmail(null); // o "N/A" o lo que tenga sentido
+            dto.setClubName(null);
+            dto.setClubLogoUrl(null);
+        }
+
         dto.setEsProyecto(true);
         dto.setLikesCount(proyecto.getLikes().size());
-        dto.setLikedByCurrentUser(false);
+        dto.setLikedByCurrentUser(false); // lo puedes calcular después si tienes el usuario
         dto.setCapacidad(proyecto.getCapacidad());
         dto.setStatus(proyecto.getStatus());
+        dto.setFotoUrl(proyecto.getFotoUrl());
         return dto;
     }
-    
+
+
     @Transactional
     public ProyectoResponseDto crearProyecto(ProyectoRequestDto dto, String email, MultipartFile imagen) {
         Usuario autor = usuarioRepository.findById(email)

@@ -15,4 +15,5 @@ import java.util.List;
 public class ProyectoResponseDto extends PublicacionResponseDto {
     private Status status;
     private Integer capacidad;
+    private String fotoUrl;
 }

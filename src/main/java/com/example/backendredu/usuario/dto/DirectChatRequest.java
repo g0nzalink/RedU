@@ -1,0 +1,12 @@
+package com.example.backendredu.usuario.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class DirectChatRequest {
+    private String receiverUsername;
+}
