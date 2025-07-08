@@ -33,39 +33,39 @@ public class SupabaseService {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
-            // 1. Obtener los chat_id donde el usuario participa
-            String chatUsersUrl = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users?select=chat_id&user_id=eq." + userId;
-            ResponseEntity<Map[]> response = restTemplate.exchange(chatUsersUrl, HttpMethod.GET, request, Map[].class);
+            // ✅ Consultamos Supabase con join: chat_users (donde user participa) + chats
+            String url = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users?select=chat_id,display_name,chats(id,name,created_at)&user_id=eq." + userId;
 
-            if (response.getBody() == null || response.getBody().length == 0) {
+            ResponseEntity<Map[]> response = restTemplate.exchange(url, HttpMethod.GET, request, Map[].class);
+            Map[] body = response.getBody();
+
+            if (body == null || body.length == 0) {
                 return List.of();
             }
 
-            List<String> chatIds = Arrays.stream(response.getBody())
-                    .map(entry -> (String) entry.get("chat_id"))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            List<ChatDto> result = new ArrayList<>();
 
-            if (chatIds.isEmpty()) {
-                return List.of();
+            for (Map row : body) {
+                Map chat = (Map) row.get("chats");
+                if (chat == null) continue;
+
+                ChatDto dto = new ChatDto();
+                dto.setId((String) chat.get("id"));
+                dto.setName((String) chat.get("name")); // nombre global
+                dto.setCreated_at((String) chat.get("created_at"));
+                dto.setDisplay_name((String) row.get("display_name")); // nombre personalizado del usuario actual
+
+                result.add(dto);
             }
 
-            // 2. Obtener información de los chats (CORREGIDO)
-            String chatsUrl = SUPABASE_URL + "?select=id,name,created_at&id=in.(" + String.join(",", chatIds) + ")";
-            ResponseEntity<ChatDto[]> chatResponse = restTemplate.exchange(chatsUrl, HttpMethod.GET, request, ChatDto[].class);
-
-            if (chatResponse.getBody() == null) {
-                return List.of();
-            }
-
-            return Arrays.asList(chatResponse.getBody());
+            return result;
 
         } catch (Exception e) {
             System.err.println("❌ Error al obtener chats del usuario: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
+
 
 
     public ChatDto buscarOCrearChatDirecto(String user1, String user2) {
@@ -110,19 +110,20 @@ public class SupabaseService {
         }
 
         // 2. Crear nuevo chat con el nombre del receptor
-        Usuario receptor = usuarioRepository.findById(user2)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario receptor no encontrado"));
+        Usuario usuario1 = usuarioRepository.findById(user1)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario 1 no encontrado"));
+        Usuario usuario2 = usuarioRepository.findById(user2)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario 2 no encontrado"));
 
-        String nombreDelChat = receptor.getUsername(); // Mostrar el nombre del otro usuario como título
-
+        String nombreDelChat = usuario2.getUsername(); // título general del chat
         Map<String, Object> newChat = new HashMap<>();
         newChat.put("name", nombreDelChat);
         newChat.put("owner_id", user1);
 
-        // ⚠️ AGREGADO: Necesario para que Supabase devuelva datos tras el POST
+        // ⚠️ Necesario para que Supabase devuelva el chat creado
         headers.set("Prefer", "return=representation");
-
         HttpEntity<Map<String, Object>> createChatRequest = new HttpEntity<>(newChat, headers);
+
         ResponseEntity<ChatDto[]> newChatResponse = restTemplate.exchange(
                 SUPABASE_URL + "?select=id,name,created_at",
                 HttpMethod.POST,
@@ -131,18 +132,26 @@ public class SupabaseService {
         );
 
         ChatDto[] createdChats = newChatResponse.getBody();
-
         if (createdChats == null || createdChats.length == 0) {
             throw new RuntimeException("Error al crear el chat directo: Supabase no devolvió datos");
         }
 
         ChatDto createdChat = createdChats[0];
 
-        // 3. Insertar usuarios en tabla chat_users
+        // 3. Insertar usuarios en chat_users con display_name individual
         String chatUsersInsertUrl = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users";
+
         List<Map<String, Object>> chatUsers = List.of(
-                Map.of("chat_id", createdChat.getId(), "user_id", user1),
-                Map.of("chat_id", createdChat.getId(), "user_id", user2)
+                Map.of(
+                        "chat_id", createdChat.getId(),
+                        "user_id", user1,
+                        "display_name", usuario2.getUsername() // Gonzalo verá "Matias"
+                ),
+                Map.of(
+                        "chat_id", createdChat.getId(),
+                        "user_id", user2,
+                        "display_name", usuario1.getUsername() // Matias verá "Gonzalo"
+                )
         );
 
         HttpEntity<List<Map<String, Object>>> insertUsersRequest = new HttpEntity<>(chatUsers, headers);
@@ -150,4 +159,5 @@ public class SupabaseService {
 
         return createdChat;
     }
+
 }

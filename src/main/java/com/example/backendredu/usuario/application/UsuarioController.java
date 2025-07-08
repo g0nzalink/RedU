@@ -78,7 +78,6 @@ public class UsuarioController {
         return ResponseEntity.ok(chats);
     }
 
-
     @PostMapping("/chat/direct")
     @PreAuthorize("hasAnyRole('ALUMNO','PROFESOR','DIRECTIVA','ADMINISTRADOR')")
     public ResponseEntity<?> crearChatDirecto(

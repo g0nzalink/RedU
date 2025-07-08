@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class ChatDto {
     private String id;
     private String name;
+    private String display_name;
     private String created_at;
 }
