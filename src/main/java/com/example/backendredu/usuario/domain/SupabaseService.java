@@ -33,7 +33,6 @@ public class SupabaseService {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
-            // ✅ Consultamos Supabase con join: chat_users (donde user participa) + chats
             String url = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users?select=chat_id,display_name,chats(id,name,created_at)&user_id=eq." + userId;
 
             ResponseEntity<Map[]> response = restTemplate.exchange(url, HttpMethod.GET, request, Map[].class);
@@ -77,7 +76,6 @@ public class SupabaseService {
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
-        // 1. Buscar si ya existe un chat entre ambos usuarios
         String filter = String.format("user_id=in.(\"%s\",\"%s\")", user1, user2);
         String chatUsersUrl = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users?select=chat_id,user_id&" + filter;
 
@@ -96,7 +94,6 @@ public class SupabaseService {
             for (Map.Entry<String, List<String>> entry : chatMap.entrySet()) {
                 List<String> users = entry.getValue();
                 if (users.contains(user1) && users.contains(user2) && users.size() == 2) {
-                    // Chat ya existe
                     String chatId = entry.getKey();
                     String chatInfoUrl = SUPABASE_URL + "?select=id,name,created_at&id=eq." + chatId;
                     ResponseEntity<ChatDto[]> chatResponse = restTemplate.exchange(chatInfoUrl, HttpMethod.GET, request, ChatDto[].class);
@@ -109,7 +106,6 @@ public class SupabaseService {
             }
         }
 
-        // 2. Crear nuevo chat con el nombre del receptor
         Usuario usuario1 = usuarioRepository.findById(user1)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario 1 no encontrado"));
         Usuario usuario2 = usuarioRepository.findById(user2)
@@ -120,7 +116,6 @@ public class SupabaseService {
         newChat.put("name", nombreDelChat);
         newChat.put("owner_id", user1);
 
-        // ⚠️ Necesario para que Supabase devuelva el chat creado
         headers.set("Prefer", "return=representation");
         HttpEntity<Map<String, Object>> createChatRequest = new HttpEntity<>(newChat, headers);
 
@@ -138,7 +133,6 @@ public class SupabaseService {
 
         ChatDto createdChat = createdChats[0];
 
-        // 3. Insertar usuarios en chat_users con display_name individual
         String chatUsersInsertUrl = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users";
 
         List<Map<String, Object>> chatUsers = List.of(
