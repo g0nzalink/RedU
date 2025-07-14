@@ -6,6 +6,7 @@ import com.example.backendredu.cloudinary.CloudinaryService;
 import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
+import com.example.backendredu.evento.domain.Evento;
 import com.example.backendredu.pertenencia.domain.Relacion;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,25 +65,40 @@ public class PublicacionService {
     
     @Transactional
     public List<PublicacionResponseDto> allPublicaciones(String emailUsuario) {
-        return publicacionRepository.findAll().stream()
+        List<Publicacion> publicaciones = publicacionRepository.findAllByOrderByFechaPublicacionDesc();
+        
+        return publicaciones.stream()
                 .map(p -> {
                     PublicacionResponseDto dto = modelMapper.map(p, PublicacionResponseDto.class);
                     
+                    // Autor
                     if (p.getAutor() != null) {
                         dto.setAutorUsername(p.getAutor().getUsername());
                         dto.setCreador(p.getAutor().getEmail());
                     }
                     
+                    // Likes
                     dto.setLikesCount(p.getLikes().size());
                     dto.setLikedByCurrentUser(
                             p.getLikes().stream()
                                     .anyMatch(like -> like.getUsuario().getEmail().equals(emailUsuario))
                     );
                     
+                    // Imagen principal
+                    dto.setFotoUrl(p.getFotoUrl());
+                    
+                    // Si es un evento, asignar datos del club
+                    if (p instanceof Evento evento && evento.getClub() != null) {
+                        dto.setClubEmail(evento.getClub().getEmail());
+                        dto.setClubName(evento.getClub().getNombre());
+                        dto.setClubLogoUrl(evento.getClub().getFotoUrl());
+                    }
+                    
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
+
     
     @Transactional
     public PublicacionResponseDto newLike(Long publicacionId, String email){

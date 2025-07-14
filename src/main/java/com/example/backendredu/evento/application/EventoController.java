@@ -86,5 +86,12 @@ public class EventoController {
     public ResponseEntity<List<UsuarioAsistenteDto>> listarAsistentes(@PathVariable Long eventoId) {
         return ResponseEntity.ok(eventoService.obtenerAsistentesDto(eventoId));
     }
+    
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @DeleteMapping("/{eventoId}")
+    public ResponseEntity<Void> eliminarEvento(@PathVariable Long eventoId) {
+        eventoService.eliminarEvento(eventoId);
+        return ResponseEntity.noContent().build();
+    }
 
 }
