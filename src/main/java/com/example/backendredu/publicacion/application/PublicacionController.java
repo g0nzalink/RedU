@@ -37,6 +37,15 @@ public class PublicacionController {
     public ResponseEntity<List<PublicacionResponseDto>> listarPublicaciones(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(publicacionService.allPublicaciones(userDetails.getUsername()));
     }
+    
+    @GetMapping("/paged")
+    public ResponseEntity<?> listarPublicacionesPaginadas(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int limit,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        
+        return ResponseEntity.ok(publicacionService.paginatePublicaciones(userDetails.getUsername(), page, limit));
+    }
 
     @GetMapping("/{idPublicacion}")
     public ResponseEntity<PublicacionResponseDto> getPublicacion(@PathVariable Long idPublicacion) {
