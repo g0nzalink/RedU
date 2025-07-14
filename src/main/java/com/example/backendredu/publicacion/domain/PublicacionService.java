@@ -7,8 +7,12 @@ import com.example.backendredu.club.domain.Club;
 import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.evento.domain.Evento;
+import com.example.backendredu.evento.dto.EventoResponseDto;
 import com.example.backendredu.pertenencia.domain.Relacion;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
+import com.example.backendredu.proyecto.domain.Proyecto;
+import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
+import com.example.backendredu.publicacion.dto.PaginatedResponse;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.dto.PublicacionUpdateDto;
@@ -21,8 +25,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,11 +53,83 @@ public class PublicacionService {
     private final ModelMapper modelMapper;
     private final CloudinaryService cloudinaryService;
     
+    private PublicacionResponseDto mapToDto(Publicacion publicacion, String username) {
+        PublicacionResponseDto dto;
+        
+        if (publicacion instanceof Proyecto proyecto) {
+            ProyectoResponseDto proyectoDto = new ProyectoResponseDto();
+            proyectoDto.setCapacidad(proyecto.getCapacidad());
+            proyectoDto.setStatus(proyecto.getStatus());
+            proyectoDto.setFotoUrl(proyecto.getFotoUrl());
+            dto = proyectoDto;
+        } else if (publicacion instanceof Evento evento) {
+            EventoResponseDto eventoDto = new EventoResponseDto();
+            eventoDto.setFecha(evento.getFecha());
+            eventoDto.setLugar(evento.getLugar());
+            
+            if (evento.getClub() != null) {
+                eventoDto.setClubEmail(evento.getClub().getEmail());
+                eventoDto.setClubName(evento.getClub().getNombre());
+                eventoDto.setClubLogoUrl(evento.getClub().getFotoUrl());
+            }
+            
+            dto = eventoDto;
+        } else {
+            dto = new PublicacionResponseDto();
+        }
+        
+        // Campos comunes
+        dto.setId(publicacion.getId());
+        dto.setTitulo(publicacion.getTitulo());
+        dto.setDescripcion(publicacion.getDescripcion());
+        dto.setFechaPublicacion(publicacion.getFechaPublicacion());
+        dto.setFechaModificacion(publicacion.getFechaModificacion());
+        dto.setEsProyecto(publicacion.getEsProyecto());
+        dto.setFotoUrl(publicacion.getFotoUrl());
+        
+        if (publicacion.getAutor() != null) {
+            dto.setCreador(publicacion.getAutor().getEmail());
+            dto.setAutorUsername(publicacion.getAutor().getUsername());
+        }
+        
+        if (publicacion.getListTag() != null) {
+            dto.setListTag(publicacion.getListTag().stream()
+                    .map(Enum::name)
+                    .toList());
+        }
+        
+        dto.setLikesCount(publicacion.getLikesCount());
+        dto.setLikedByCurrentUser(
+                publicacion.getLikes().stream()
+                        .anyMatch(l -> l.getUsuario().getEmail().equals(username))
+        );
+        
+        return dto;
+    }
     
     public PublicacionResponseDto getPublicacionById(Long id) {
-        Publicacion p = publicacionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada con id: " + id));
+        Publicacion p = publicacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada con id: " + id));
         
-        PublicacionResponseDto dto = modelMapper.map(p, PublicacionResponseDto.class);
+        PublicacionResponseDto dto;
+        
+        if (p instanceof Evento evento) {
+            dto = modelMapper.map(evento, EventoResponseDto.class);
+            
+            if (evento.getClub() != null) {
+                ((EventoResponseDto) dto).setFecha(evento.getFecha());
+                ((EventoResponseDto) dto).setLugar(evento.getLugar());
+                
+                dto.setClubEmail(evento.getClub().getEmail());
+                dto.setClubName(evento.getClub().getNombre());
+                dto.setClubLogoUrl(evento.getClub().getFotoUrl());
+            }
+            
+        } else if (p instanceof Proyecto proyecto) {
+            dto = modelMapper.map(proyecto, ProyectoResponseDto.class);
+        } else {
+            dto = modelMapper.map(p, PublicacionResponseDto.class);
+        }
         
         if (p.getAutor() != null) {
             dto.setAutorUsername(p.getAutor().getUsername());
@@ -62,6 +142,7 @@ public class PublicacionService {
         
         return dto;
     }
+    
     
     @Transactional
     public List<PublicacionResponseDto> allPublicaciones(String emailUsuario) {
@@ -159,5 +240,22 @@ public class PublicacionService {
         publicacionRepository.save(publicacion);
         return url;
     }
+    
+    public PaginatedResponse<PublicacionResponseDto> paginatePublicaciones(String username, int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("fechaPublicacion").descending());
+        
+        Page<Publicacion> publicacionesPage = publicacionRepository.findAll(pageable);
+        
+        List<PublicacionResponseDto> dtos = publicacionesPage
+                .getContent()
+                .stream()
+                .map(p -> mapToDto(p, username))
+                .toList();
+        
+        boolean hasNext = publicacionesPage.hasNext();
+        
+        return new PaginatedResponse<>(dtos, hasNext);
+    }
+    
 }
 
