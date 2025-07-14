@@ -12,6 +12,7 @@ import com.example.backendredu.pertenencia.domain.Pertenencia;
 import com.example.backendredu.pertenencia.domain.Relacion;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
 import com.example.backendredu.publicacion.domain.Publicacion;
+import com.example.backendredu.publicacion.dto.PaginatedResponse;
 import com.example.backendredu.publicacion.dto.PublicacionRequestDto;
 import com.example.backendredu.publicacion.dto.PublicacionResponseDto;
 import com.example.backendredu.publicacion.infrastructure.PublicacionRepository;
@@ -23,6 +24,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -199,4 +204,49 @@ public class EventoService {
     }
     
     public void eliminarEvento(Long eventoId) { eventoRepository.deleteById(eventoId); }
+    
+    public PaginatedResponse<EventoResponseDto> paginateEventos(String username, int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("fechaPublicacion").descending());
+        Page<Evento> eventosPage = eventoRepository.findAll(pageable);
+        
+        List<EventoResponseDto> dtos = eventosPage.getContent().stream()
+                .map(evento -> {
+                    EventoResponseDto dto = new EventoResponseDto();
+                    dto.setId(evento.getId());
+                    dto.setTitulo(evento.getTitulo());
+                    dto.setDescripcion(evento.getDescripcion());
+                    dto.setFechaPublicacion(evento.getFechaPublicacion());
+                    dto.setFechaModificacion(evento.getFechaModificacion());
+                    dto.setFecha(evento.getFecha());
+                    dto.setLugar(evento.getLugar());
+                    dto.setEsProyecto(false);
+                    dto.setFotoUrl(evento.getFotoUrl());
+                    dto.setLikesCount(evento.getLikes().size());
+                    dto.setLikedByCurrentUser(
+                            evento.getLikes().stream()
+                                    .anyMatch(like -> like.getUsuario().getEmail().equals(username))
+                    );
+                    
+                    if (evento.getAutor() != null) {
+                        dto.setCreador(evento.getAutor().getEmail());
+                        dto.setAutorUsername(evento.getAutor().getUsername());
+                    }
+                    
+                    if (evento.getClub() != null) {
+                        dto.setClubEmail(evento.getClub().getEmail());
+                        dto.setClubName(evento.getClub().getNombre());
+                        dto.setClubLogoUrl(evento.getClub().getFotoUrl());
+                    }
+                    
+                    if (evento.getListTag() != null) {
+                        dto.setListTag(evento.getListTag().stream().map(Enum::name).toList());
+                    }
+                    
+                    return dto;
+                })
+                .toList();
+        
+        return new PaginatedResponse<>(dtos, eventosPage.hasNext());
+    }
+    
 }

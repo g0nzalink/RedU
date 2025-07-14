@@ -3,8 +3,10 @@ package com.example.backendredu.evento.application;
 import com.example.backendredu.evento.domain.EventoService;
 import com.example.backendredu.evento.dto.EventoRequestDto;
 import com.example.backendredu.evento.dto.EventoResponseDto;
+import com.example.backendredu.publicacion.dto.PaginatedResponse;
 import com.example.backendredu.usuario.dto.UsuarioAsistenteDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +38,17 @@ public class EventoController {
                 .created(URI.create("http://localhost/evento/" + creado.getId()))
                 .body(creado);
     }
-
+    
+    @GetMapping("/paged")
+    public ResponseEntity<PaginatedResponse<EventoResponseDto>> listarEventosPaginados(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String username = userDetails.getUsername();
+        return ResponseEntity.ok(eventoService.paginateEventos(username, page, limit));
+    }
+    
     @PostMapping("/solo-json")
     public ResponseEntity<EventoResponseDto> crearEventoJson(
             @RequestBody EventoRequestDto dto,

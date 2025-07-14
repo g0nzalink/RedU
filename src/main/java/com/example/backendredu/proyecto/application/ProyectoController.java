@@ -1,14 +1,12 @@
 package com.example.backendredu.proyecto.application;
 
-import aj.org.objectweb.asm.TypeReference;
 import com.example.backendredu.proyecto.domain.ProyectoService;
 import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.backendredu.publicacion.dto.PaginatedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +19,7 @@ import java.util.List;
 @RequestMapping("/proyecto")
 @RequiredArgsConstructor
 public class ProyectoController {
-
+    
     private final ProyectoService proyectoService;
     
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -34,6 +32,16 @@ public class ProyectoController {
         return ResponseEntity
                 .created(URI.create("http://localhost/proyecto/" + creado.getId()))
                 .body(creado);
+    }
+    
+    @GetMapping("/paged")
+    public ResponseEntity<PaginatedResponse<ProyectoResponseDto>> listarProyectosPaginados(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int limit,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String username = userDetails.getUsername();
+        return ResponseEntity.ok(proyectoService.paginateProyectos(username, page, limit));
     }
     
     @GetMapping

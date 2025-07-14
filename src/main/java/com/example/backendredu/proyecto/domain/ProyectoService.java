@@ -6,12 +6,17 @@ import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
 import com.example.backendredu.proyecto.infrastructure.ProyectoRepository;
+import com.example.backendredu.publicacion.dto.PaginatedResponse;
 import com.example.backendredu.usuario.domain.Usuario;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -56,8 +61,46 @@ public class ProyectoService {
         
         return dto;
     }
-
-
+    
+    public PaginatedResponse<ProyectoResponseDto> paginateProyectos(String username, int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("fechaPublicacion").descending());
+        Page<Proyecto> proyectosPage = proyectoRepository.findAll(pageable);
+        
+        List<ProyectoResponseDto> dtos = proyectosPage.getContent().stream()
+                .map(proyecto -> {
+                    ProyectoResponseDto dto = new ProyectoResponseDto();
+                    dto.setId(proyecto.getId());
+                    dto.setTitulo(proyecto.getTitulo());
+                    dto.setDescripcion(proyecto.getDescripcion());
+                    dto.setFechaPublicacion(proyecto.getFechaPublicacion());
+                    dto.setFechaModificacion(proyecto.getFechaModificacion());
+                    dto.setCapacidad(proyecto.getCapacidad());
+                    dto.setStatus(proyecto.getStatus());
+                    dto.setEsProyecto(true);
+                    dto.setFotoUrl(proyecto.getFotoUrl());
+                    dto.setLikesCount(proyecto.getLikes().size());
+                    dto.setLikedByCurrentUser(
+                            proyecto.getLikes().stream()
+                                    .anyMatch(like -> like.getUsuario().getEmail().equals(username))
+                    );
+                    
+                    if (proyecto.getAutor() != null) {
+                        dto.setCreador(proyecto.getAutor().getEmail());
+                        dto.setAutorUsername(proyecto.getAutor().getUsername());
+                    }
+                    
+                    if (proyecto.getListTag() != null) {
+                        dto.setListTag(proyecto.getListTag().stream().map(Enum::name).toList());
+                    }
+                    
+                    return dto;
+                })
+                .toList();
+        
+        return new PaginatedResponse<>(dtos, proyectosPage.hasNext());
+    }
+    
+    
     @Transactional
     public ProyectoResponseDto crearProyecto(ProyectoRequestDto dto, String email, MultipartFile imagen) {
         Usuario autor = usuarioRepository.findById(email)
