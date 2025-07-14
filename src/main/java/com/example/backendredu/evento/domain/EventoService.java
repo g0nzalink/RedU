@@ -109,15 +109,8 @@ public class EventoService {
         }
 
         Evento guardado = eventoRepository.save(evento);
-
-        EventoResponseDto respuesta = modelMapper.map(guardado, EventoResponseDto.class);
-        respuesta.setCreador(autor.getEmail());
-        respuesta.setAutorUsername(autor.getUsername());
-        respuesta.setClubEmail(club.getEmail());
-        respuesta.setClubLogoUrl(club.getFotoUrl());
-        respuesta.setClubName(club.getNombre());
-        respuesta.setLikesCount(0);
-        respuesta.setLikedByCurrentUser(false);
+        
+        EventoResponseDto respuesta = convertirAEventoDto(guardado);
 
         return respuesta;
     }
@@ -125,7 +118,7 @@ public class EventoService {
 
     @Transactional
     public List<EventoResponseDto> allEventos() {
-        return eventoRepository.findAll().stream()
+        return eventoRepository.findAllByOrderByFechaPublicacionDesc().stream()
                 .map(this::convertirAEventoDto)
                 .collect(Collectors.toList());
     }
@@ -204,6 +197,6 @@ public class EventoService {
                 .map(u -> new UsuarioAsistenteDto(u.getEmail(), u.getUsername(), u.getFotoPerfilUrl()))
                 .collect(Collectors.toList());
     }
-
-
+    
+    public void eliminarEvento(Long eventoId) { eventoRepository.deleteById(eventoId); }
 }

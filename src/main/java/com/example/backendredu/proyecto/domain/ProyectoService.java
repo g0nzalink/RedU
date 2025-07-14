@@ -53,6 +53,7 @@ public class ProyectoService {
         dto.setCapacidad(proyecto.getCapacidad());
         dto.setStatus(proyecto.getStatus());
         dto.setFotoUrl(proyecto.getFotoUrl());
+        
         return dto;
     }
 
