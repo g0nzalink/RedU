@@ -44,12 +44,9 @@ public class PertenenciaController {
 		return ResponseEntity.ok(es);
 	}
 	
-	
 	@GetMapping("/directivade")
 	public ResponseEntity<List<ClubResumenDto>> esDirectivaDe(@AuthenticationPrincipal UserDetails userDetails) {
 		List<ClubResumenDto> clubes = pertenenciaService.getClubesComoDirectiva(userDetails.getUsername());
 		return ResponseEntity.ok(clubes);
 	}
-	
-
 }

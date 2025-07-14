@@ -51,10 +51,6 @@ public class Publicacion {
 
     @Column
     private Integer likesCount = 0;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_email", referencedColumnName = "email")
-    private Club club;
 
     @Column(name = "fotoUrl")
     private String fotoUrl;

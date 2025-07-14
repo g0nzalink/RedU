@@ -32,19 +32,6 @@ public class PublicacionController {
     private final PublicacionService publicacionService;
 
     private final ComentarioService comentarioService;
-    
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PublicacionResponseDto> crearPublicacion(
-            @RequestPart("data") PublicacionRequestDto publicacion,
-            @RequestPart(value = "imagen", required = false) MultipartFile imagen,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        
-        PublicacionResponseDto created = publicacionService.createPublicacion(publicacion, userDetails.getUsername(), imagen);
-        return ResponseEntity
-                .created(URI.create("http://localhost/publicacion/" + created.getId()))
-                .body(created);
-    }
 
     @GetMapping
     public ResponseEntity<List<PublicacionResponseDto>> listarPublicaciones(@AuthenticationPrincipal UserDetails userDetails) {
@@ -54,17 +41,6 @@ public class PublicacionController {
     @GetMapping("/{idPublicacion}")
     public ResponseEntity<PublicacionResponseDto> getPublicacion(@PathVariable Long idPublicacion) {
             return ResponseEntity.ok(publicacionService.getPublicacionById(idPublicacion));
-    }
-
-    @PatchMapping("/actualizar/{id}")
-    public ResponseEntity<PublicacionResponseDto> actualizarPublicacion(
-            @PathVariable Long id,
-            @Valid @RequestBody PublicacionUpdateDto publicacion,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        String emailLogeado = userDetails.getUsername();
-        PublicacionResponseDto resp = publicacionService
-                .actualizarPublicacion(publicacion, id, emailLogeado);
-        return ResponseEntity.ok(resp);
     }
 
     @PatchMapping("/{publicacionId}/comentar")

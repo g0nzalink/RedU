@@ -140,7 +140,6 @@ public class ClubController {
         List<ClubResponseDto> dtos = clubes.stream()
                 .map(club -> modelMapper.map(club, ClubResponseDto.class))
                 .toList();
-        System.out.println("🎯 DTOs generados:");
         dtos.forEach(dto -> System.out.println(dto));
         return ResponseEntity.ok(dtos);
     }
@@ -160,10 +159,6 @@ public class ClubController {
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            System.out.println("📩 Recibida imagen para: " + clubEmail);
-            System.out.println("🧑 Usuario autenticado: " + userDetails.getUsername());
-            
-            // Verificar roles manualmente
             boolean esAdmin = userDetails.getAuthorities().stream()
                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMINISTRADOR"));
             boolean esDirectiva = pertenenciaService.esDirectivaDeClub(clubEmail, userDetails.getUsername());
@@ -173,12 +168,10 @@ public class ClubController {
                         .body("No tienes permisos para modificar el logo de este club.");
             }
             
-            // Buscar el club
             Club club = clubRepository.findById(clubEmail)
                     .orElseThrow(() -> new ClubNotFoundException("Club no encontrado."));
             System.out.println("✅ Club encontrado: " + club.getNombre());
             
-            // Subir imagen real
             String url = cloudinaryService.uploadImage(file, "clubs", clubEmail);
             club.setFotoUrl(url);
             clubRepository.save(club);

@@ -91,9 +91,18 @@ public class PertenenciaService {
     public Pertenencia designarDirectiva(String usuarioEmail, String clubEmail) {
         Usuario usu = usuarioRepository.findById(usuarioEmail)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
         Club club = clubRepository.findById(clubEmail)
                 .orElseThrow(() -> new EntityNotFoundException("Club no encontrado"));
 
+        boolean yaEsDirectiva = pertenenciaRepository
+                .existsByUsuarioIdEmailAndRelacion(usuarioEmail, Relacion.DIRECTIVA);
+
+        if (yaEsDirectiva) {
+            throw new IllegalStateException("Este usuario ya es directiva de otro club.");
+        }
+
+        // Verificar si ya es DIRECTIVA de este club
         if (pertenenciaRepository.existsByUsuarioIdAndClubIdAndRelacion(usu, club, Relacion.DIRECTIVA)) {
             throw new IllegalStateException("Ya es directiva de este club");
         }
@@ -103,10 +112,13 @@ public class PertenenciaService {
         p.setClubId(club);
         p.setFechaUnion(LocalDate.now());
         p.setRelacion(Relacion.DIRECTIVA);
+
         usu.setUserType(Role.DIRECTIVA);
         usuarioRepository.save(usu);
+
         return pertenenciaRepository.save(p);
     }
+
 
     public Pertenencia crearPertenenciaMiembro(
             String operadorEmail,

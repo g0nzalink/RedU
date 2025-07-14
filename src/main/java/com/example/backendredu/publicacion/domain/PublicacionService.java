@@ -41,57 +41,7 @@ public class PublicacionService {
     private final UsuarioRepository usuarioRepository;
     private final LikeRepository likeRepository;
     private final ModelMapper modelMapper;
-    private final PertenenciaRepository pertenenciaRepository;
-    private final ClubRepository clubRepository;
     private final CloudinaryService cloudinaryService;
-    
-    @Transactional
-    public PublicacionResponseDto createPublicacion(PublicacionRequestDto dto, String emailUsuario, MultipartFile imagen) {
-        Usuario autor = usuarioRepository.findById(emailUsuario)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + emailUsuario));
-        
-        Publicacion entidad = modelMapper.map(dto, Publicacion.class);
-        entidad.setAutor(autor);
-        entidad.setEsProyecto(false);
-        entidad.setFechaPublicacion(LocalDateTime.now());
-        
-        if (imagen != null && !imagen.isEmpty()) {
-            try {
-                String url = cloudinaryService.uploadImage(imagen, "publicaciones", "pub_" + UUID.randomUUID());
-                entidad.setFotoUrl(url);
-            } catch (IOException e) {
-                throw new RuntimeException("Error al subir imagen", e);
-            }
-        }
-        
-        Club club = clubRepository.findById(dto.getClub())
-                .orElseThrow(() -> new ClubNotFoundException("No se encontró al club con ID: " + dto.getClub()));
-        
-        if (autor.getUserType().equals(Role.DIRECTIVA)) {
-            boolean pertenece = pertenenciaRepository
-                    .findAllByUsuarioIdEmailAndRelacion(emailUsuario, Relacion.DIRECTIVA).stream()
-                    .anyMatch(p -> p.getClubId().getEmail().equals(dto.getClub()));
-            
-            if (!pertenece) {
-                throw new AccessDeniedException("El usuario no pertenece a la directiva del club especificado");
-            }
-            
-            entidad.setClub(club);
-        } else if (autor.getUserType().equals(Role.ADMINISTRADOR)) {
-            entidad.setClub(club);
-        } else {
-            throw new IllegalStateException("Solo DIRECTIVA o ADMINISTRADOR pueden publicar.");
-        }
-        
-        Publicacion saved = publicacionRepository.save(entidad);
-        PublicacionResponseDto dtoResp = modelMapper.map(saved, PublicacionResponseDto.class);
-        
-        dtoResp.setAutorUsername(autor.getUsername());
-        dtoResp.setCreador(autor.getEmail());
-        dtoResp.setClubLogoUrl(club.getFotoUrl());
-        
-        return dtoResp;
-    }
     
     
     public PublicacionResponseDto getPublicacionById(Long id) {
@@ -102,15 +52,6 @@ public class PublicacionService {
         if (p.getAutor() != null) {
             dto.setAutorUsername(p.getAutor().getUsername());
             dto.setCreador(p.getAutor().getEmail());
-        }
-        
-        if (p.getClub() != null) {
-            dto.setClubName(p.getClub().getNombre());
-            dto.setClubLogoUrl(p.getClub().getFotoUrl());
-            dto.setClubEmail(p.getClub().getEmail());
-        } else {
-            dto.setClubName("ADMINCLUB");
-            dto.setClubEmail(null);
         }
         
         dto.setLikesCount(p.getLikes().size());
@@ -131,12 +72,6 @@ public class PublicacionService {
                         dto.setCreador(p.getAutor().getEmail());
                     }
                     
-                    if (p.getClub() != null) {
-                        dto.setClubName(p.getClub().getNombre());
-                        dto.setClubLogoUrl(p.getClub().getFotoUrl());
-                        dto.setClubEmail(p.getClub().getEmail());
-                    }
-                    
                     dto.setLikesCount(p.getLikes().size());
                     dto.setLikedByCurrentUser(
                             p.getLikes().stream()
@@ -146,41 +81,6 @@ public class PublicacionService {
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public PublicacionResponseDto actualizarPublicacion(PublicacionUpdateDto dto, Long id, String emailLogeado) {
-        Publicacion entidad = publicacionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada con id: " + id));
-
-        String emailAutor = entidad.getAutor().getEmail();
-        if (!emailAutor.equals(emailLogeado)) {
-            throw new AccessDeniedException("Solo el autor puede actualizar esta publicación");
-        }
-
-        if (dto.getTitulo() != null) { entidad.setTitulo(dto.getTitulo()); }
-        if (dto.getDescripcion() != null) { entidad.setDescripcion(dto.getDescripcion()); }
-        entidad.setFechaModificacion(LocalDateTime.now());
-        if (dto.getListTag() != null) { entidad.setListTag(dto.getListTag()); }
-
-        Publicacion updated = publicacionRepository.save(entidad);
-        PublicacionResponseDto responseDto = modelMapper.map(updated, PublicacionResponseDto.class);
-        
-        responseDto.setAutorUsername(updated.getAutor().getUsername());
-        responseDto.setCreador(updated.getAutor().getEmail());
-        
-        if (updated.getClub() != null) {
-            responseDto.setClubName(updated.getClub().getNombre());
-            responseDto.setClubLogoUrl(updated.getClub().getFotoUrl());
-            responseDto.setClubEmail(updated.getClub().getEmail());
-        }
-        
-        responseDto.setLikesCount(updated.getLikes().size());
-        responseDto.setLikedByCurrentUser(
-                updated.getLikes().stream().anyMatch(l -> l.getUsuario().getEmail().equals(emailLogeado))
-        );
-        
-        return responseDto;
     }
     
     @Transactional
