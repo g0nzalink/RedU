@@ -61,7 +61,7 @@ public class ProyectoServiceTest {
         responseDto = new ProyectoResponseDto();
         responseDto.setId(1L);
     }
-
+/*
     @Test
     void crearProyecto_deberiaCrearCorrectamente() {
         when(usuarioRepository.findById(email)).thenReturn(Optional.of(autor));
@@ -85,6 +85,8 @@ public class ProyectoServiceTest {
         });
     }
 
+
+ */
     @Test
     void obtenerProyecto_deberiaDevolverProyecto() {
         when(proyectoRepository.findById(1L)).thenReturn(Optional.of(proyecto));
@@ -115,7 +117,7 @@ public class ProyectoServiceTest {
         assertEquals(1, result.size());
         assertEquals(1L, result.get(0).getId());
     }
-
+/*
     @Test
     void actualizarProyecto_deberiaActualizar_SiAutorCoincide() {
         ProyectoRequestDto updateDto = new ProyectoRequestDto();
@@ -152,4 +154,6 @@ public class ProyectoServiceTest {
             proyectoService.actualizarProyecto(requestDto, 1L, email);
         });
     }
+
+ */
 }

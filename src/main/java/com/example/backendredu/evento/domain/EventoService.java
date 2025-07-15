@@ -135,7 +135,12 @@ public class EventoService {
     }
 
     @Transactional
-    public EventoResponseDto actualizarEvento(EventoRequestDto nuevoEvento, Long eventoId, String emailLogeado) {
+    public EventoResponseDto actualizarEvento(
+            EventoRequestDto dto,
+            Long eventoId,
+            String emailLogeado,
+            MultipartFile imagen
+    ) {
         Evento evento = eventoRepository.findById(eventoId)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
 
@@ -144,26 +149,39 @@ public class EventoService {
             throw new AccessDeniedException("Solo el autor puede actualizar este evento");
         }
 
-        if (nuevoEvento.getTitulo() != null) {
-            evento.setTitulo(nuevoEvento.getTitulo());
+        if (dto.getTitulo() != null) {
+            evento.setTitulo(dto.getTitulo());
         }
-        if (nuevoEvento.getDescripcion() != null) {
-            evento.setDescripcion(nuevoEvento.getDescripcion());
+        if (dto.getDescripcion() != null) {
+            evento.setDescripcion(dto.getDescripcion());
         }
-        if (nuevoEvento.getLugar() != null) {
-            evento.setLugar(nuevoEvento.getLugar());
+        if (dto.getLugar() != null) {
+            evento.setLugar(dto.getLugar());
         }
-        if (nuevoEvento.getFecha() != null) {
-            evento.setFecha(nuevoEvento.getFecha());
+        if (dto.getFecha() != null) {
+            evento.setFecha(dto.getFecha());
         }
-        if (nuevoEvento.getListTag() != null) {
-            evento.setListTag(nuevoEvento.getListTag());
+        if (dto.getListTag() != null) {
+            evento.setListTag(dto.getListTag());
+        }
+
+        if (imagen != null && !imagen.isEmpty()) {
+            try {
+                String publicId = "evento_" + UUID.randomUUID();
+                String url = cloudinaryService.uploadImage(imagen, "eventos", publicId);
+                evento.setFotoUrl(url);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al subir imagen del evento", e);
+            }
         }
 
         evento.setFechaModificacion(LocalDateTime.now());
+        Evento saved = eventoRepository.save(evento);
 
-        Evento actualizado = eventoRepository.save(evento);
-        return convertirAEventoDto(actualizado);
+        EventoResponseDto response = convertirAEventoDto(saved);
+        response.setCreador(saved.getAutor().getEmail());
+        response.setAutorUsername(saved.getAutor().getUsername());
+        return response;
     }
 
     @Transactional
@@ -202,8 +220,24 @@ public class EventoService {
                 .map(u -> new UsuarioAsistenteDto(u.getEmail(), u.getUsername(), u.getFotoPerfilUrl()))
                 .collect(Collectors.toList());
     }
-    
-    public void eliminarEvento(Long eventoId) { eventoRepository.deleteById(eventoId); }
+
+    @Transactional
+    public void eliminarEvento(Long eventoId, String emailLogeado) {
+        Evento evento = eventoRepository.findById(eventoId)
+                .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado"));
+
+        String clubEmail = evento.getClub().getEmail();
+        boolean esDirectiva = pertenenciaRepository
+                .existsByUsuarioIdEmailAndClubIdEmailAndRelacion(
+                        emailLogeado, clubEmail, Relacion.DIRECTIVA
+                );
+
+        if (!esDirectiva) {
+            throw new AccessDeniedException("Solo directiva del club puede eliminar este evento");
+        }
+
+        eventoRepository.delete(evento);
+    }
     
     public PaginatedResponse<EventoResponseDto> paginateEventos(String username, int page, int limit) {
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("fechaPublicacion").descending());

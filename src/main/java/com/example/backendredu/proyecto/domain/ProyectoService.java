@@ -7,6 +7,7 @@ import com.example.backendredu.proyecto.dto.ProyectoRequestDto;
 import com.example.backendredu.proyecto.dto.ProyectoResponseDto;
 import com.example.backendredu.proyecto.infrastructure.ProyectoRepository;
 import com.example.backendredu.publicacion.dto.PaginatedResponse;
+import com.example.backendredu.usuario.domain.Role;
 import com.example.backendredu.usuario.domain.Usuario;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -145,27 +146,80 @@ public class ProyectoService {
     }
 
     @Transactional
-    public ProyectoResponseDto actualizarProyecto(ProyectoRequestDto newproyecto, Long proyectoId, String emailLogeado) {
+    public ProyectoResponseDto actualizarProyecto(
+            ProyectoRequestDto dto,
+            Long proyectoId,
+            String emailLogeado,
+            MultipartFile imagen
+    ) {
         Proyecto proyecto = proyectoRepository.findById(proyectoId)
                 .orElseThrow(() -> new EntityNotFoundException("Proyecto no encontrado"));
 
+        // Verificar autor
         String emailAutor = proyecto.getAutor().getEmail();
         if (!emailAutor.equals(emailLogeado)) {
             throw new AccessDeniedException("Solo el autor puede actualizar esta publicación");
         }
 
-        if(newproyecto.getStatus() != null){
-            proyecto.setStatus(newproyecto.getStatus());
+        // Actualizar campos opcionales
+        if (dto.getStatus() != null) {
+            proyecto.setStatus(dto.getStatus());
         }
-        if (newproyecto.getTitulo() != null) {
-            proyecto.setTitulo(newproyecto.getTitulo());
+        if (dto.getTitulo() != null) {
+            proyecto.setTitulo(dto.getTitulo());
         }
-        if (newproyecto.getDescripcion() != null) {
-            proyecto.setDescripcion(newproyecto.getDescripcion());
+        if (dto.getDescripcion() != null) {
+            proyecto.setDescripcion(dto.getDescripcion());
         }
+        if (dto.getListTag() != null) {
+            proyecto.setListTag(dto.getListTag());
+        }
+        if (dto.getCapacidad() != null) {
+            proyecto.setCapacidad(dto.getCapacidad());
+        }
+
+        // Si llega una nueva imagen, la subimos a Cloudinary y actualizamos la URL
+        if (imagen != null && !imagen.isEmpty()) {
+            try {
+                String publicId = "proy_" + UUID.randomUUID();
+                String url = cloudinaryService.uploadImage(imagen, "proyectos", publicId);
+                proyecto.setFotoUrl(url);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al subir imagen", e);
+            }
+        }
+
         proyecto.setFechaModificacion(LocalDateTime.now());
 
-        Proyecto updated = proyectoRepository.save(proyecto);
-        return convertirAProyectoDto(updated);
+        Proyecto saved = proyectoRepository.save(proyecto);
+        ProyectoResponseDto responseDto = convertirAProyectoDto(saved);
+
+        // Asegurarnos de rellenar autor y creador
+        responseDto.setAutorUsername(saved.getAutor().getUsername());
+        responseDto.setCreador(saved.getAutor().getEmail());
+
+        return responseDto;
     }
+
+    @Transactional
+    public void eliminarProyecto(Long proyectoId, String emailLogeado) {
+        Proyecto proyecto = proyectoRepository.findById(proyectoId)
+                .orElseThrow(() -> new EntityNotFoundException("Proyecto no encontrado"));
+
+        String emailAutor = proyecto.getAutor().getEmail();
+
+        Usuario solicitante = usuarioRepository.findByEmail(emailLogeado)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        boolean esAutor = emailAutor.equals(emailLogeado);
+        boolean esAdmin = solicitante.getUserType() == Role.ADMINISTRADOR;
+
+        if (!esAutor && !esAdmin) {
+            throw new AccessDeniedException("Solo el autor o un administrador puede eliminar este proyecto");
+        }
+
+        proyectoRepository.delete(proyecto);
+    }
+
+
 }

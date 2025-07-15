@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/club/logo/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/esdirectiva").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/proyecto/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

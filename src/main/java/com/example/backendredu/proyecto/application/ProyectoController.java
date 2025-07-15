@@ -55,13 +55,30 @@ public class ProyectoController {
         return ResponseEntity.ok(proyectoService.obtenerProyecto(proyectoId));
     }
 
-    @PatchMapping("/actualizar/{proyectoId}")
+    @PatchMapping(
+            path = "/actualizar/{proyectoId}",
+            consumes = { MediaType.MULTIPART_FORM_DATA_VALUE }
+    )
     public ResponseEntity<ProyectoResponseDto> actualizarProyecto(
-            @RequestBody ProyectoRequestDto proyecto,
+            @RequestPart("data") ProyectoRequestDto proyectoDto,
+            @RequestPart(value = "imagen", required = false) MultipartFile imagen,
             @PathVariable Long proyectoId,
-            @AuthenticationPrincipal UserDetails userDetails){
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         String emailLogeado = userDetails.getUsername();
-        ProyectoResponseDto actualizado = proyectoService.actualizarProyecto(proyecto, proyectoId, emailLogeado);
+        ProyectoResponseDto actualizado = proyectoService.actualizarProyecto(
+                proyectoDto, proyectoId, emailLogeado, imagen
+        );
         return ResponseEntity.ok(actualizado);
+    }
+
+    @DeleteMapping("/{proyectoId}")
+    public ResponseEntity<Void> eliminarProyecto(
+            @PathVariable Long proyectoId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String emailLogeado = userDetails.getUsername();
+        proyectoService.eliminarProyecto(proyectoId, emailLogeado);
+        return ResponseEntity.noContent().build();
     }
 }

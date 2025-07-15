@@ -28,5 +28,7 @@ public interface PertenenciaRepository extends JpaRepository<Pertenencia, Long> 
 	List<Pertenencia> findByUsuarioIdAndRelacion(Usuario usuarioId, Relacion relacion);
 
 	boolean existsByUsuarioIdEmailAndRelacion(String email, Relacion relacion);
+
+	boolean existsByUsuarioIdEmailAndClubIdEmailAndRelacion(String email, String clubemail,Relacion relacion);
 }
 

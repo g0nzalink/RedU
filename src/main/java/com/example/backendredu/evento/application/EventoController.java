@@ -67,14 +67,20 @@ public class EventoController {
         return ResponseEntity.ok(eventoService.obtenerEvento(eventoId));
     }
 
-    @PatchMapping("/actualizar/{eventoId}")
+    @PatchMapping(
+            path = "/actualizar/{eventoId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<EventoResponseDto> actualizarEvento(
-            @RequestBody EventoRequestDto evento,
+            @RequestPart("data") EventoRequestDto eventoDto,
+            @RequestPart(value = "imagen", required = false) MultipartFile imagen,
             @PathVariable Long eventoId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         String emailLogeado = userDetails.getUsername();
-        EventoResponseDto actualizado = eventoService.actualizarEvento(evento, eventoId, emailLogeado);
+        EventoResponseDto actualizado = eventoService.actualizarEvento(
+                eventoDto, eventoId, emailLogeado, imagen
+        );
         return ResponseEntity.ok(actualizado);
     }
 
@@ -98,11 +104,15 @@ public class EventoController {
     public ResponseEntity<List<UsuarioAsistenteDto>> listarAsistentes(@PathVariable Long eventoId) {
         return ResponseEntity.ok(eventoService.obtenerAsistentesDto(eventoId));
     }
-    
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'DIRECTIVA')")
     @DeleteMapping("/{eventoId}")
-    public ResponseEntity<Void> eliminarEvento(@PathVariable Long eventoId) {
-        eventoService.eliminarEvento(eventoId);
+    public ResponseEntity<Void> eliminarEvento(
+            @PathVariable Long eventoId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String emailLogeado = userDetails.getUsername();
+        eventoService.eliminarEvento(eventoId, emailLogeado);
         return ResponseEntity.noContent().build();
     }
 
