@@ -1,6 +1,8 @@
 package com.example.backendredu.comentario.domain;
 
 import com.example.backendredu.comentario.infrastructure.ComentarioRepository;
+import com.example.backendredu.notificacion.domain.NotificacionService;
+import com.example.backendredu.notificacion.domain.TipoNotificacion;
 import com.example.backendredu.publicacion.domain.Publicacion;
 import com.example.backendredu.comentario.dto.ComentarioRequestDto;
 import com.example.backendredu.comentario.dto.ComentarioResponseDto;
@@ -29,6 +31,8 @@ public class ComentarioService {
 
     private final ModelMapper modelMapper;
 
+    private final NotificacionService notificacionService;
+
     public ComentarioResponseDto crearComentario(String autorEmail, ComentarioRequestDto newcomentario, Long publicacionId) {
         Usuario user = userRepository.findByEmail(autorEmail).get();
 
@@ -43,6 +47,14 @@ public class ComentarioService {
         Comentario saved = comentarioRepository.save(comentario);
 
         pub.getListComentario().add(saved);
+        if (!pub.getAutor().getUsername().equals(user.getEmail())) {
+            notificacionService.crearNotificacion(
+                    pub.getAutor().getUsername(), // receptor de la notificación
+                    user.getUsername() + " comentó tu publicación",
+                    "/publicacion/" + pub.getId(),
+                    TipoNotificacion.COMENTARIO
+            );
+        }
 
         return modelMapper.map(saved, ComentarioResponseDto.class);
     }

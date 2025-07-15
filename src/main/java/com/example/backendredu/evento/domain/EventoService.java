@@ -8,6 +8,8 @@ import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.evento.dto.EventoRequestDto;
 import com.example.backendredu.evento.dto.EventoResponseDto;
 import com.example.backendredu.evento.infrastructure.EventoRepository;
+import com.example.backendredu.notificacion.domain.NotificacionService;
+import com.example.backendredu.notificacion.domain.TipoNotificacion;
 import com.example.backendredu.pertenencia.domain.Pertenencia;
 import com.example.backendredu.pertenencia.domain.Relacion;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
@@ -35,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,11 +48,10 @@ import java.util.stream.Collectors;
 public class EventoService {
 
     private final UsuarioRepository usuarioRepository;
-    private final ClubRepository clubRepository;
     private final PertenenciaRepository pertenenciaRepository;
     private final EventoRepository eventoRepository;
     private final CloudinaryService cloudinaryService;
-    private final ModelMapper modelMapper;
+    private final NotificacionService notificacionService;
 
     private EventoResponseDto convertirAEventoDto(Evento evento) {
         EventoResponseDto dto = new EventoResponseDto();
@@ -114,10 +116,23 @@ public class EventoService {
         }
 
         Evento guardado = eventoRepository.save(evento);
-        
-        EventoResponseDto respuesta = convertirAEventoDto(guardado);
 
-        return respuesta;
+        List<Usuario> seguidores = pertenenciaRepository
+                .findByClubIdAndRelacion(club, Relacion.SEGUIDOR)
+                .stream()
+                .map(Pertenencia::getUsuarioId)
+                .toList();
+
+        for (Usuario seguidor : seguidores) {
+            notificacionService.crearNotificacion(
+                    seguidor.getEmail(),
+                    "El club " + club.getNombre() + " ha publicado un nuevo evento: " + evento.getTitulo(),
+                    "/publicacion/" + guardado.getId(),
+                    TipoNotificacion.NUEVA_PUBLICACION
+            );
+        }
+
+        return convertirAEventoDto(guardado);
     }
 
 
@@ -181,6 +196,18 @@ public class EventoService {
         EventoResponseDto response = convertirAEventoDto(saved);
         response.setCreador(saved.getAutor().getEmail());
         response.setAutorUsername(saved.getAutor().getUsername());
+
+        for (Usuario asistente : evento.getAsistentes()) {
+            if (!asistente.getEmail().equals(emailLogeado)) {
+                notificacionService.crearNotificacion(
+                        asistente.getEmail(),
+                        "El evento \"" + evento.getTitulo() + "\" ha sido actualizado.",
+                        "/publicacion/" + evento.getId(),
+                        TipoNotificacion.EDITAR_EVENTO
+                );
+            }
+        }
+
         return response;
     }
 
@@ -197,6 +224,20 @@ public class EventoService {
         }
 
         eventoRepository.save(evento);
+
+        List<Pertenencia> directivas = pertenenciaRepository
+                .findByClubIdAndRelacion(evento.getClub(), Relacion.DIRECTIVA);
+
+        if (!directivas.isEmpty()) {
+            Usuario directivo = directivas.get(0).getUsuarioId(); // asumimos solo una directiva
+            notificacionService.crearNotificacion(
+                    directivo.getEmail(),
+                    usuario.getUsername() + " ha confirmado su asistencia al evento: " + evento.getTitulo(),
+                    "/publicacion/" + evento.getId(),
+                    TipoNotificacion.ASISTENCIA
+            );
+        }
+
     }
 
     @Transactional
@@ -209,6 +250,23 @@ public class EventoService {
 
         evento.getAsistentes().removeIf(u -> u.getEmail().equals(emailUsuario));
         eventoRepository.save(evento);
+
+        evento.getAsistentes().removeIf(u -> u.getEmail().equals(emailUsuario));
+        eventoRepository.save(evento);
+
+        List<Pertenencia> directivas = pertenenciaRepository
+                .findByClubIdAndRelacion(evento.getClub(), Relacion.DIRECTIVA);
+
+        if (!directivas.isEmpty()) {
+            Usuario directivo = directivas.get(0).getUsuarioId(); // asumimos solo una directiva
+            notificacionService.crearNotificacion(
+                    directivo.getEmail(),
+                    usuario.getUsername() + " ha cancelado su asistencia al evento: " + evento.getTitulo(),
+                    "/publicacion/" + evento.getId(),
+                    TipoNotificacion.ASISTENCIA
+            );
+        }
+
     }
 
     @Transactional
@@ -236,7 +294,22 @@ public class EventoService {
             throw new AccessDeniedException("Solo directiva del club puede eliminar este evento");
         }
 
+        List<Usuario> asistentes = new ArrayList<>(evento.getAsistentes());
+        String tituloEvento = evento.getTitulo();
+
         eventoRepository.delete(evento);
+
+        for (Usuario asistente : asistentes) {
+            if (!asistente.getEmail().equals(emailLogeado)) {
+                notificacionService.crearNotificacion(
+                        asistente.getEmail(),
+                        "El evento \"" + tituloEvento + "\" ha sido cancelado.",
+                        "/",
+                        TipoNotificacion.ELIMINAR_EVENTO
+                );
+            }
+        }
+
     }
     
     public PaginatedResponse<EventoResponseDto> paginateEventos(String username, int page, int limit) {

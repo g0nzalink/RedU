@@ -8,6 +8,8 @@ import com.example.backendredu.club.exceptions.ClubNotFoundException;
 import com.example.backendredu.club.infrastructure.ClubRepository;
 import com.example.backendredu.evento.domain.Evento;
 import com.example.backendredu.evento.dto.EventoResponseDto;
+import com.example.backendredu.notificacion.domain.NotificacionService;
+import com.example.backendredu.notificacion.domain.TipoNotificacion;
 import com.example.backendredu.pertenencia.domain.Relacion;
 import com.example.backendredu.pertenencia.infrastructure.PertenenciaRepository;
 import com.example.backendredu.proyecto.domain.Proyecto;
@@ -52,6 +54,7 @@ public class PublicacionService {
     private final LikeRepository likeRepository;
     private final ModelMapper modelMapper;
     private final CloudinaryService cloudinaryService;
+    private final NotificacionService notificacionService;
     
     private PublicacionResponseDto mapToDto(Publicacion publicacion, String username) {
         PublicacionResponseDto dto;
@@ -208,7 +211,17 @@ public class PublicacionService {
         Publicacion updated = publicacionRepository.save(publicacion);
         PublicacionResponseDto dto = modelMapper.map(updated, PublicacionResponseDto.class);
         dto.setLikedByCurrentUser(existingLike.isEmpty()); // true si recién dio like, false si retiró
-        
+
+        if (existingLike.isEmpty() && !publicacion.getAutor().getUsername().equals(email)) {
+            notificacionService.crearNotificacion(
+                    publicacion.getAutor().getUsername(),
+                    usuario.getUsername() + " le dio like a tu publicación",
+                    "/publicacion/" + publicacion.getId(),
+                    TipoNotificacion.LIKE
+            );
+        }
+
+
         return dto;
     }
 
