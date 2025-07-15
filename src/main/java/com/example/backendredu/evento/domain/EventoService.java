@@ -262,7 +262,7 @@ public class EventoService {
             notificacionService.crearNotificacion(
                     directivo.getEmail(),
                     usuario.getUsername() + " ha cancelado su asistencia al evento: " + evento.getTitulo(),
-                    "/publicacion/" + evento.getId(),
+                    "/post/" + evento.getId(),
                     TipoNotificacion.ASISTENCIA
             );
         }

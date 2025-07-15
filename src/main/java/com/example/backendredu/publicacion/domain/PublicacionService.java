@@ -220,13 +220,12 @@ public class PublicacionService {
             publicacion.setLikesCount(publicacion.getLikesCount() + 1);
             publicacion.getLikes().add(newLike);
 
-            // 🔔 Notificación solo si no es el autor de la publicación
             String autorEmail = publicacion.getAutor().getEmail();
             if (!autorEmail.equals(usuarioEmail)) {
                 notificacionService.crearNotificacion(
                         autorEmail,                                      // destinatario por email
                         usuario.getUsername() + " le dio like a tu publicación",
-                        "/publicacion/" + publicacionId,
+                        "/post/" + publicacionId,
                         TipoNotificacion.LIKE
                 );
             }
