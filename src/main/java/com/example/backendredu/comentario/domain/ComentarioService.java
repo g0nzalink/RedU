@@ -12,6 +12,7 @@ import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,12 +34,25 @@ public class ComentarioService {
 
     private final NotificacionService notificacionService;
 
-    public ComentarioResponseDto crearComentario(String autorEmail, ComentarioRequestDto newcomentario, Long publicacionId) {
-        Usuario user = userRepository.findByEmail(autorEmail).get();
+    @Transactional
+    public ComentarioResponseDto crearComentario(String autorEmail,
+                                                 ComentarioRequestDto newcomentario,
+                                                 Long publicacionId) {
+        // 1) Cargo la publicación con su autor (y comentarios si quiero sincronizar la lista)
+        Publicacion pub = publicacionRepository
+                .findByIdWithAutorAndComentarios(publicacionId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Publicación no encontrada con id: " + publicacionId));
 
-        Publicacion pub = publicacionRepository.findById(publicacionId)
-                .orElseThrow(() -> new EntityNotFoundException("Publicación no encontrada"));
+        // 2) Inicializo la colección de comentarios para poder modificarla en memoria
+        pub.getListComentario().size();
 
+        // 3) Cargo el usuario que hace el comentario
+        Usuario user = userRepository.findByEmail(autorEmail)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Usuario no encontrado con email: " + autorEmail));
+
+        // 4) Creo y guardo el comentario
         Comentario comentario = modelMapper.map(newcomentario, Comentario.class);
         comentario.setPublicacion(pub);
         comentario.setFechaPublicacion(LocalDateTime.now());
@@ -46,16 +60,21 @@ public class ComentarioService {
 
         Comentario saved = comentarioRepository.save(comentario);
 
+        // 5) Sincronizo la colección bidireccional (sólo en memoria)
         pub.getListComentario().add(saved);
-        if (!pub.getAutor().getUsername().equals(user.getEmail())) {
+
+        // 6) Notificación si el autor del comentario no es el mismo que el autor de la publicación
+        String autorPubEmail = pub.getAutor().getEmail();
+        if (!autorPubEmail.equals(user.getEmail())) {
             notificacionService.crearNotificacion(
-                    pub.getAutor().getUsername(), // receptor de la notificación
+                    autorPubEmail,                                    // destinatario por email
                     user.getUsername() + " comentó tu publicación",
                     "/publicacion/" + pub.getId(),
                     TipoNotificacion.COMENTARIO
             );
         }
 
+        // 7) Mapeo y retorno del DTO de respuesta
         return modelMapper.map(saved, ComentarioResponseDto.class);
     }
 

@@ -183,47 +183,64 @@ public class PublicacionService {
                 .collect(Collectors.toList());
     }
 
-    
+
     @Transactional
-    public PublicacionResponseDto newLike(Long publicacionId, String email){
-        Publicacion publicacion = publicacionRepository.findById(publicacionId)
-                .orElseThrow(() -> new EntityNotFoundException("Publicacion no encontrada con id: " + publicacionId));
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
-        
-        Optional<Like> existingLike = likeRepository.findByPublicacionIdAndUsuarioEmail(publicacionId, email);
-        
+    public PublicacionResponseDto newLike(Long publicacionId, String usuarioEmail) {
+        // 1) Carga publicación con autor y lista de likes
+        Publicacion publicacion = publicacionRepository
+                .findByIdWithAutorAndLikes(publicacionId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Publicación no encontrada con id: " + publicacionId));
+
+        // 2) Aseguramos que la colección de likes esté inicializada
+        publicacion.getLikes().size();
+
+        // 3) Carga el usuario que va a dar/quitar like
+        Usuario usuario = usuarioRepository.findByEmail(usuarioEmail)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Usuario no encontrado con email: " + usuarioEmail));
+
+        // 4) Verificamos si ya había like
+        Optional<Like> existingLike = likeRepository
+                .findByPublicacionIdAndUsuarioEmail(publicacionId, usuarioEmail);
+
         if (existingLike.isPresent()) {
-            // 🔁 Ya había like → eliminar
+            // 🔁 Ya había like → eliminarlo
             likeRepository.delete(existingLike.get());
             publicacion.setLikesCount(publicacion.getLikesCount() - 1);
-            publicacion.getLikes().removeIf(l -> l.getUsuario().getEmail().equals(email));
+            publicacion.getLikes().removeIf(
+                    l -> l.getUsuario().getEmail().equals(usuarioEmail));
         } else {
-            // ➕ Nuevo like
+            // ➕ Nuevo like → agregarlo
             Like newLike = new Like();
             newLike.setPublicacion(publicacion);
             newLike.setUsuario(usuario);
             likeRepository.save(newLike);
+
             publicacion.setLikesCount(publicacion.getLikesCount() + 1);
             publicacion.getLikes().add(newLike);
+
+            // 🔔 Notificación solo si no es el autor de la publicación
+            String autorEmail = publicacion.getAutor().getEmail();
+            if (!autorEmail.equals(usuarioEmail)) {
+                notificacionService.crearNotificacion(
+                        autorEmail,                                      // destinatario por email
+                        usuario.getUsername() + " le dio like a tu publicación",
+                        "/publicacion/" + publicacionId,
+                        TipoNotificacion.LIKE
+                );
+            }
         }
-        
+
+        // 5) Guardamos la publicación y mapeamos a DTO
         Publicacion updated = publicacionRepository.save(publicacion);
-        PublicacionResponseDto dto = modelMapper.map(updated, PublicacionResponseDto.class);
-        dto.setLikedByCurrentUser(existingLike.isEmpty()); // true si recién dio like, false si retiró
-
-        if (existingLike.isEmpty() && !publicacion.getAutor().getUsername().equals(email)) {
-            notificacionService.crearNotificacion(
-                    publicacion.getAutor().getUsername(),
-                    usuario.getUsername() + " le dio like a tu publicación",
-                    "/publicacion/" + publicacion.getId(),
-                    TipoNotificacion.LIKE
-            );
-        }
-
+        PublicacionResponseDto dto = modelMapper
+                .map(updated, PublicacionResponseDto.class);
+        dto.setLikedByCurrentUser(existingLike.isEmpty());
 
         return dto;
     }
+
 
     public List<UsuarioResponseDto> getUserLikes(Long publicacionId) {
         Publicacion publicacion = publicacionRepository.findById(publicacionId)

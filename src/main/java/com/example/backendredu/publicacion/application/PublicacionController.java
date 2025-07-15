@@ -57,6 +57,7 @@ public class PublicacionController {
             @RequestBody ComentarioRequestDto comentario,
             @PathVariable Long publicacionId,
             @AuthenticationPrincipal UserDetails userDetails) {
+        System.out.println("Usuario autenticado: " + userDetails.getUsername());
         ComentarioResponseDto creado = comentarioService.crearComentario(userDetails.getUsername(), comentario, publicacionId);
         return ResponseEntity.created(URI.create("http://localhost/publicacion/" + creado.getId())).body(creado);
     }
@@ -70,6 +71,7 @@ public class PublicacionController {
     @PatchMapping("/{publicacionId}/like")
     public ResponseEntity<PublicacionResponseDto> likePublicacion(@PathVariable Long publicacionId,
                                                                   @AuthenticationPrincipal UserDetails userDetails){
+        System.out.println("Usuario autenticado: " + userDetails.getUsername());
         PublicacionResponseDto resp = publicacionService.newLike(publicacionId, userDetails.getUsername());
         return ResponseEntity.ok(resp);
     }

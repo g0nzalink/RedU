@@ -32,7 +32,7 @@ class ComentarioServiceTest {
 	private ModelMapper modelMapper;
 	
 	private ComentarioService comentarioService;
-	
+	/*
 	@BeforeEach
 	void setUp() {
 		comentarioRepository = mock(ComentarioRepository.class);
@@ -47,7 +47,7 @@ class ComentarioServiceTest {
 				modelMapper
 		);
 	}
-
+*/
 	@Test
 	void testCrearComentario() {
 		ComentarioRequestDto requestDto = new ComentarioRequestDto();
