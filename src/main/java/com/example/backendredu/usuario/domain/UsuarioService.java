@@ -78,12 +78,6 @@ public class UsuarioService implements UserDetailsService {
 				List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name()))
 		);
 	}
-
-	@Transactional
-	public List<Usuario> allUsuarios() {
-		return userRepository.findAll().stream()
-				.collect(Collectors.toList());
-	}
 	
 	@Transactional
 	public Usuario updateUsuario(String email, UsuarioUpdateDto dto) {

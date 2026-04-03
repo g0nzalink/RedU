@@ -4,10 +4,7 @@ import com.example.backendredu.cloudinary.CloudinaryService;
 import com.example.backendredu.usuario.domain.SupabaseService;
 import com.example.backendredu.usuario.domain.Usuario;
 import com.example.backendredu.usuario.domain.UsuarioService;
-import com.example.backendredu.usuario.dto.ChatDto;
-import com.example.backendredu.usuario.dto.DirectChatRequest;
-import com.example.backendredu.usuario.dto.UsuarioResponseDto;
-import com.example.backendredu.usuario.dto.UsuarioUpdateDto;
+import com.example.backendredu.usuario.dto.*;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -84,11 +81,43 @@ public class UsuarioController {
             @RequestBody DirectChatRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        System.out.println("✅ Entré a crearChatDirecto");
         String actual = userDetails.getUsername();
         String receptor = request.getReceiverUsername();
         ChatDto chat = supabaseService.buscarOCrearChatDirecto(actual, receptor);
         return ResponseEntity.ok(chat);
 
     }
+
+    @GetMapping("/chat/{chatId}/messages")
+    @PreAuthorize("hasAnyRole('ALUMNO','PROFESOR','DIRECTIVA','ADMINISTRADOR')")
+    public ResponseEntity<?> obtenerMensajes(
+            @PathVariable String chatId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            List<MessageDto> messages = supabaseService.obtenerMensajesDelChat(
+                    chatId, userDetails.getUsername()
+            );
+            return ResponseEntity.ok(messages);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/chat/{chatId}/messages")
+    @PreAuthorize("hasAnyRole('ALUMNO','PROFESOR','DIRECTIVA','ADMINISTRADOR')")
+    public ResponseEntity<?> enviarMensaje(
+            @PathVariable String chatId,
+            @RequestBody SendMessageRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            MessageDto msg = supabaseService.enviarMensaje(
+                    chatId, userDetails.getUsername(), request.getContent()
+            );
+            return ResponseEntity.ok(msg);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+    }
+
+
 }

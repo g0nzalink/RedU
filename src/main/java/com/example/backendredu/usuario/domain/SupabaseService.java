@@ -1,6 +1,7 @@
 package com.example.backendredu.usuario.domain;
 
 import com.example.backendredu.usuario.dto.ChatDto;
+import com.example.backendredu.usuario.dto.MessageDto;
 import com.example.backendredu.usuario.infrastructure.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,8 +22,17 @@ public class SupabaseService {
 
     @Value("${SUPABASE_SERVICE_ROLE_KEY}")
     private String supabaseServiceKey;
+    @Value("${SUPABASE_URL}")
+    private String supabaseUrl;
 
-    private static final String SUPABASE_URL = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chats";
+    private HttpHeaders buildHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("apikey", supabaseServiceKey);
+        headers.set("Authorization", "Bearer " + supabaseServiceKey);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
+    }
 
     public List<ChatDto> obtenerChatsDelUsuario(String userId) {
         HttpHeaders headers = new HttpHeaders();
@@ -33,7 +43,7 @@ public class SupabaseService {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
-            String url = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users?select=chat_id,display_name,chats(id,name,created_at)&user_id=eq." + userId;
+            String url = supabaseUrl + "/rest/v1/chat_users?select=chat_id,display_name,chats(id,name,created_at)&user_id=eq." + userId;
 
             ResponseEntity<Map[]> response = restTemplate.exchange(url, HttpMethod.GET, request, Map[].class);
             Map[] body = response.getBody();
@@ -65,8 +75,6 @@ public class SupabaseService {
         }
     }
 
-
-
     public ChatDto buscarOCrearChatDirecto(String user1, String user2) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("apikey", supabaseServiceKey);
@@ -77,7 +85,7 @@ public class SupabaseService {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         String filter = String.format("user_id=in.(\"%s\",\"%s\")", user1, user2);
-        String chatUsersUrl = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users?select=chat_id,user_id&" + filter;
+        String chatUsersUrl = supabaseUrl + "/rest/v1/chat_users?select=chat_id,user_id&" + filter;
 
         ResponseEntity<Map[]> response = restTemplate.exchange(chatUsersUrl, HttpMethod.GET, request, Map[].class);
         Map[] body = response.getBody();
@@ -95,7 +103,7 @@ public class SupabaseService {
                 List<String> users = entry.getValue();
                 if (users.contains(user1) && users.contains(user2) && users.size() == 2) {
                     String chatId = entry.getKey();
-                    String chatInfoUrl = SUPABASE_URL + "?select=id,name,created_at&id=eq." + chatId;
+                    String chatInfoUrl = supabaseUrl + "/rest/v1/chats?select=id,name,created_at&id=eq." + chatId;
                     ResponseEntity<ChatDto[]> chatResponse = restTemplate.exchange(chatInfoUrl, HttpMethod.GET, request, ChatDto[].class);
                     ChatDto[] existingChats = chatResponse.getBody();
 
@@ -120,7 +128,7 @@ public class SupabaseService {
         HttpEntity<Map<String, Object>> createChatRequest = new HttpEntity<>(newChat, headers);
 
         ResponseEntity<ChatDto[]> newChatResponse = restTemplate.exchange(
-                SUPABASE_URL + "?select=id,name,created_at",
+                supabaseUrl + "/rest/v1/chats?select=id,name,created_at",
                 HttpMethod.POST,
                 createChatRequest,
                 ChatDto[].class
@@ -133,7 +141,7 @@ public class SupabaseService {
 
         ChatDto createdChat = createdChats[0];
 
-        String chatUsersInsertUrl = "https://qfqcubmkxczcbuadlkmt.supabase.co/rest/v1/chat_users";
+        String chatUsersInsertUrl = supabaseUrl + "/rest/v1/chat_users";
 
         List<Map<String, Object>> chatUsers = List.of(
                 Map.of(
@@ -152,6 +160,65 @@ public class SupabaseService {
         restTemplate.postForEntity(chatUsersInsertUrl, insertUsersRequest, String.class);
 
         return createdChat;
+    }
+
+    private boolean usuarioPerteneceAlChat(String chatId, String userId) {
+        HttpEntity<Void> request = new HttpEntity<>(buildHeaders());
+        String url = supabaseUrl + "/rest/v1/chat_users?chat_id=eq."
+                + chatId + "&user_id=eq." + userId + "&select=chat_id";
+
+        ResponseEntity<Map[]> response = restTemplate.exchange(
+                url, HttpMethod.GET, request, Map[].class
+        );
+
+        Map[] body = response.getBody();
+        return body != null && body.length > 0;
+    }
+
+    public List<MessageDto> obtenerMensajesDelChat(String chatId, String userId) {
+        // Primero verificar que el usuario pertenece al chat
+        if (!usuarioPerteneceAlChat(chatId, userId)) {
+            throw new RuntimeException("No tienes acceso a este chat");
+        }
+
+        HttpEntity<Void> request = new HttpEntity<>(buildHeaders());
+        String url = supabaseUrl + "/rest/v1/messages?select=*&chat_id=eq."
+                + chatId + "&order=inserted_at.asc";
+
+        ResponseEntity<MessageDto[]> response = restTemplate.exchange(
+                url, HttpMethod.GET, request, MessageDto[].class
+        );
+
+        MessageDto[] body = response.getBody();
+        return body != null ? Arrays.asList(body) : List.of();
+    }
+
+    public MessageDto enviarMensaje(String chatId, String userId, String content) {
+        // Verificar que el usuario pertenece al chat antes de enviar
+        if (!usuarioPerteneceAlChat(chatId, userId)) {
+            throw new RuntimeException("No tienes acceso a este chat");
+        }
+
+        HttpHeaders headers = buildHeaders();
+        headers.set("Prefer", "return=representation");
+
+        Map<String, Object> mensaje = Map.of(
+                "chat_id", chatId,
+                "user_id", userId,
+                "content", content
+        );
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(mensaje, headers);
+        ResponseEntity<MessageDto[]> response = restTemplate.exchange(
+                supabaseUrl + "/rest/v1/messages",
+                HttpMethod.POST, request, MessageDto[].class
+        );
+
+        MessageDto[] body = response.getBody();
+        if (body == null || body.length == 0) {
+            throw new RuntimeException("Error al enviar mensaje");
+        }
+        return body[0];
     }
 
 }

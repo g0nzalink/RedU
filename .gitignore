@@ -36,3 +36,6 @@ build/
 
 .env
 create_layers.sh
+
+ClubInitializer.java
+UserInitializer.java
